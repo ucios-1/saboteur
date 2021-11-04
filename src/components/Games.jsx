@@ -1,26 +1,18 @@
-import logo from '../logo.svg';
+import saboteur1 from "../images/saboteur1_cover.jpg";
+import saboteur2 from "../images/saboteur2_cover.png";
 import { Link } from "react-router-dom";
+import Navbar from "./Navbar";
 
 function Games(){
     return(
-        <div className="App">
-            <header className="App-header">
-                <img src={logo} className="App-logo" alt="logo" />
-                <p>
-                Edit <code>src/App.js</code> and save to reload.
-                </p>
-                <a
-                className="App-link"
-                href="https://reactjs.org"
-                target="_blank"
-                rel="noopener noreferrer"
-                >
-                Learn React
-                </a>
-
-                <button><Link to="/about">CLick me!</Link></button>
-                
-            </header>
+        <div>
+            <Navbar />
+            <div className="container">
+                <header className="games">
+                    <Link to="/saboteur/1"><img src={saboteur1} className="saboteur-cover" alt="Saboteur cover page" /></Link>
+                    <Link to="/saboteur/2"><img src={saboteur2} className="saboteur-cover" alt="Saboteur second part cover page" /></Link>             
+                </header>
+            </div>
         </div>
     );
 }

@@ -1,42 +1,72 @@
-body {
-  
+html, body, #app {
+  height: 100%;
 }
 
-.App {
-  text-align: center;
+a {
+  color: transparent;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+a:hover {
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 1.1rem;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.font1-5rem {
+  font-size: 1.5rem;
+  font-weight: bold;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.btn.font1-5rem {
+  margin: 20px 0;
+}
+
+/* Nav bar */
+.navbar {
+  font-family: "Ubuntu", sans-serif;
+}
+
+.navbar-nav {
   display: flex;
-  flex-direction: column;
+  align-items: center;
+}
+
+.nav-item {
+  margin: 10px;
+}
+
+.logo-img {
+  height: 7vh;
+  min-height: 50px;
+}
+
+/* Games to choose - root */
+
+.games {
+  background-color: #282c34;
+  min-height: 90vh;
+  display: flex;
+  flex-direction: row;
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
 }
 
-.App-link {
-  color: #61dafb;
+.saboteur-cover {
+  margin: 1vh;
+  width: 30vw;
+  max-width: 400px;
+  border-radius: 15px;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+@media (max-width: 550px) {
+  .games {
+    flex-direction: column;
   }
-  to {
-    transform: rotate(360deg);
-  }
+}
+
+/* Games List */
+.table {
+  margin-top: 8vh;
 }
