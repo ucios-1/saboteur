@@ -1,13 +1,14 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import Navbar from "./Navbar.jsx";
 import TableRow from "./TableRow";
 
 function GamesList(){
+    
     return (
-        <div class="">
+        <div>
             <Navbar />
             <div className="container flex-centered-two-demention">
-                <table class="table table-light table-hover table-striped">
+                <table className="table table-light table-hover table-striped">
                     <thead>
                         <tr>
                             <th scope="col">#</th>
@@ -22,9 +23,12 @@ function GamesList(){
                         <TableRow id="3" num="3" name="game name" playersNum="8/15" access="free" />
                     </tbody>
                 </table>
-                <div className="d-grid gap-2 col-6 mx-auto">
+                <Link 
+                    className="d-grid gap-2 col-6 mx-auto" 
+                    to={useLocation().pathname === "/saboteur/1" ? "/saboteur/1/new%20game" : "/saboteur/2/new%20game"}
+                >
                     <button className="btn btn-outline-light font1-5rem">New Game</button>
-                </div>
+                </Link>
             </div>
         </div>
     );

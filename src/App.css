@@ -1,15 +1,37 @@
-html, body, #app {
+.test-red {
+  background-color: maroon;
+  border: mistyrose 1px solid;
+  height: 10%;
+}
+
+html, body, main {
   height: 100%;
+  width: 100%;
+}
+
+#root {
+  width: 100%;
+  height: 90%;
 }
 
 a {
-  color: transparent;
+  color: inherit;
+  text-decoration: inherit;
 }
 
 a:hover {
-  text-decoration: none;
+  color: inherit;
+  text-decoration: inherit;
   font-weight: 700;
-  font-size: 1.1rem;
+}
+
+.container-fluid {
+  padding: 0;
+}
+
+form {
+  width: 100%;
+  height: auto;
 }
 
 .font1-5rem {
@@ -21,9 +43,25 @@ a:hover {
   margin: 20px 0;
 }
 
+.flex-center-hor {
+  display: flex;
+  justify-content: center;
+  height: auto;
+}
+
+.flex-center-ver {
+  display: flex;
+  align-items: center;
+}
+
+.full-height {
+  height: 100%;
+}
+
 /* Nav bar */
 .navbar {
   font-family: "Ubuntu", sans-serif;
+  font-size: 1.2rem;
 }
 
 .navbar-nav {
@@ -69,4 +107,40 @@ a:hover {
 /* Games List */
 .table {
   margin-top: 8vh;
+}
+
+/* New Game */
+.form-container  {
+  background-color: #f8f9fa;
+  border-radius: 10px;
+  height: auto !important;
+  margin-top: 8vh;
+  padding: 0.5rem 1rem;
+}
+
+.form-container, .form-control, .form-select {
+  font-size: 1.2rem;
+}
+
+.form-input-separator {
+  margin: 2.5vh 0;
+}
+
+/* The game */
+/* remove later */
+.flex-center-ver div {
+  background-color: oldlace;
+  border: rgb(119, 5, 250) 1px solid;
+}
+/* remove later */
+
+.playing-card {
+  margin: 0.5vh;
+  height: 15vh;
+  border-radius: 15px;
+}
+
+.playing-field {
+  height: 15vh;
+  border-radius: 15px;
 }
