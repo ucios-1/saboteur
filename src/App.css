@@ -1,8 +1,3 @@
-.test-red {
-  background-color: maroon;
-  border: mistyrose 1px solid;
-  height: 10%;
-}
 
 html, body, main {
   height: 100%;
@@ -25,13 +20,17 @@ a:hover {
   font-weight: 700;
 }
 
-.container-fluid {
-  padding: 0;
-}
-
 form {
   width: 100%;
   height: auto;
+}
+
+textarea {
+  width: 100%;
+}
+
+.container-fluid {
+  padding: 0;
 }
 
 .font1-5rem {
@@ -39,8 +38,12 @@ form {
   font-weight: bold;
 }
 
+.form-label {
+  color: #424242;
+}
+
 .btn.font1-5rem {
-  margin: 20px 0;
+  margin: 20px 0 0;
 }
 
 .flex-center-hor {
@@ -52,6 +55,12 @@ form {
 .flex-center-ver {
   display: flex;
   align-items: center;
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .full-height {
@@ -82,7 +91,7 @@ form {
 
 .games {
   background-color: #282c34;
-  min-height: 90vh;
+  min-height: 85vh;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -113,13 +122,13 @@ form {
 .form-container  {
   background-color: #f8f9fa;
   border-radius: 10px;
-  height: auto !important;
-  margin-top: 8vh;
+  height: 100%;
+  margin-top: 5vh;
   padding: 0.5rem 1rem;
 }
 
 .form-container, .form-control, .form-select {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
 }
 
 .form-input-separator {
@@ -127,20 +136,89 @@ form {
 }
 
 /* The game */
-/* remove later */
-.flex-center-ver div {
-  background-color: oldlace;
-  border: rgb(119, 5, 250) 1px solid;
+.add-space-bottom{
+  padding-bottom: 60%;
 }
-/* remove later */
+
+.board {
+  display: inline-grid;
+  grid-template-columns: auto auto auto auto auto;
+  margin: 2vh;
+  height: auto;
+  width: auto;
+}
+
+.field-card {
+  background-image: url(./images/saboteur1_cover.jpg);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.field {
+  border-radius: 15px;
+  height: 9vh;
+  min-height: 67px;
+  width: 4vw;
+  min-width: 57px;
+  background-color: #282c34;
+}
+
+.icon {
+  font-size: 2rem;
+  padding: 2vh;
+  text-align: center;
+}
+
+.icon-active {
+  color: #1b5e1b;
+}
+
+.icon-deactive {
+  color: #5e1616;
+}
+
+.player {
+  display: flex;
+  flex-direction: column;
+  font-family: "Ubuntu", sans-serif;
+  margin: 5px;
+  text-align: center;
+  width: fit-content;
+}
+
+.player-active {
+  color: #cfcfcf;
+}
+
+.player-deactive {
+  color: #636262;
+}
+
+.playing-area {
+  display: inline-grid;
+  grid-template-columns: 20% 50% 30%;
+  width: 100%;
+  height: 50%;
+  overflow-y: scroll;
+}
+
+.playing-cards {
+  height: 50%;
+  margin: 1vh;
+}
 
 .playing-card {
-  margin: 0.5vh;
-  height: 15vh;
-  border-radius: 15px;
+  height: 12vh;
+  width: calc(12vh * 0.8);
+  min-height: 65px;
+  min-width: 55px;
+  margin: 1vh;
 }
 
-.playing-field {
-  height: 15vh;
-  border-radius: 15px;
+.row.fixed-bottom {
+  border-top: #cfcfcf 2px solid;
+  background-color: #282c34;
+  margin: 5px;
 }
+
