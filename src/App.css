@@ -25,10 +25,6 @@ form {
   height: auto;
 }
 
-textarea {
-  width: 100%;
-}
-
 .container-fluid {
   padding: 0;
 }
@@ -63,8 +59,39 @@ textarea {
   justify-content: center;
 }
 
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
+.fixed-right-leftrounded {
+  position: fixed;
+  height: 9vh;
+  width: 9vh;
+  right: 0;
+  top: 12vh;
+  border-radius: 50% 0 0 50%;
+}
+
 .full-height {
   height: 100%;
+}
+
+::-webkit-scrollbar {
+  width: 3px;
+}
+
+::-webkit-scrollbar-track {
+  border-radius: 2px;
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 5px;
+  background: #888;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }
 
 /* Nav bar */
@@ -165,17 +192,22 @@ textarea {
 }
 
 .icon {
-  font-size: 2rem;
-  padding: 2vh;
+  font-size: min(5vw, 2rem);
+  padding: 5px;
   text-align: center;
 }
 
 .icon-active {
-  color: #1b5e1b;
+  color: #2a8a2a;
 }
 
 .icon-deactive {
-  color: #5e1616;
+  color: #7a1f1f;
+}
+
+.list-small {
+  height: 30%;
+  overflow-y: scroll;
 }
 
 .player {
@@ -185,6 +217,11 @@ textarea {
   margin: 5px;
   text-align: center;
   width: fit-content;
+}
+
+.player>p {
+  font-size: min(2vw, 0.8rem);
+  margin: 0;
 }
 
 .player-active {
@@ -222,3 +259,93 @@ textarea {
   margin: 5px;
 }
 
+/* messanger */
+.messanger {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  overflow-y: scroll;
+  max-height: 45vh;
+  min-height: 300px;
+}
+
+.mssg {
+  margin: 10px;
+  padding: 10px;
+  width: 80%;
+}
+
+.mssg-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.mssg-footer {
+  display: flex;
+  flex-direction: column;
+}
+
+.mssg-options {
+  display:inline-block;
+  font-weight:400;
+  line-height:1.5;
+  color:#212529;
+  text-align:center;
+  text-decoration:none;
+  vertical-align:middle;
+  cursor:pointer;
+  -webkit-user-select:none;
+  -moz-user-select:none;
+  user-select:none;
+  background-color:transparent;
+  border:1px solid transparent;
+  padding:.375rem .75rem;
+  font-size:1rem;
+  transition:color .15s ease-in-out,
+  background-color .15s ease-in-out,
+  border-color .15s ease-in-out,
+  box-shadow .15s ease-in-out;
+  color:#6c757d;
+}
+
+.mssg-options:hover {
+  color:#fff;
+  background-color:#6c757d;
+  border-color:#6c757d
+}
+
+.mssg-options:active {
+  color:#fff;
+  background-color:#6c757d;
+  border-color:#6c757d
+}
+
+.mssg-text {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-bottom: 1px #c2c1c1 solid;
+}
+
+.mssg-send {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+}
+
+.message-left {
+  box-shadow: -2px 1px 5px -2px #575757;
+  border-radius: 10px 10px 10px 0;
+}
+
+.message-right {
+  box-shadow: 2px 1px 5px -2px #575757;
+  margin-left: auto;
+  border-radius: 10px 10px 0 10px;
+}
+
+.player-name {
+  font-weight: bold;
+}
