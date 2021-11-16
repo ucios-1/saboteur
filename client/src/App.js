@@ -10,8 +10,7 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<Games />} />
-      <Route path="/saboteur/1" element={<GamesList />} />
-      <Route path="/saboteur/2" element={<GamesList />} />
+      <Route path="/saboteur/:version" element={<GamesList />} />
       <Route path="/saboteur/:version/new%20game" element={<NewGame />} />
       <Route path="/saboteur/:version/game/undefined" element={<TheGame />} />
     </Routes>

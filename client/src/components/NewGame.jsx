@@ -1,11 +1,28 @@
-import { useParams } from "react-router-dom";
-import { Link, useLocation } from "react-router-dom";
+import { useState } from "react";
+import { Link, useParams } from "react-router-dom";
+import { v4 as uuidv4} from "uuid";
 import Navbar from "./Navbar";
 
-function NewGame(params) {
+function NewGame() {
+    const [gameCard, updateState] = useState({
+        playerName: "", 
+        gameName: ""
+    });
     const v = useParams();
     var gameID;
     console.log(v.version);
+
+    function handleChange() {
+
+    }
+
+    function createGame(e) {
+        e.preventDefault();
+        // check for Saboteur version ==> v.verion
+        const playerID = uuidv4();
+
+        console.log(playerID);
+    }
 
     return (
         <div>
@@ -14,14 +31,14 @@ function NewGame(params) {
                <main>
                     <div className="flex-center-hor">
                         <div className="form-container col-md-7 col-lg-8">
-                            <form>
+                            <form onSubmit={createGame}>
                                 <div className="form-input-separator col-sm-12">
                                     <label for="playerName" className="form-label">Player name</label>
-                                    <input className="form-control" type="text" name="playerName" value="" placeholder="change text to hooks here!!!!"/>
+                                    <input className="form-control" type="text" name="playerName" onChange={handleChange} value={gameCard.playerName} placeholder="change text to hooks here!!!!"/>
                                 </div>
                                 <div className="form-input-separator col-sm-12">
                                     <label for="gameName" className="form-label">Game name</label>
-                                    <input className="form-control" type="text" name="gameName" value="" placeholder="change text to hooks here!!!!"/>
+                                    <input className="form-control" type="text" name="gameName" value={gameCard.gameName} placeholder="change text to hooks here!!!!"/>
                                 </div>
                                 <div className="form-input-separator col-sm-12">
                                     <label for="gameName" className="form-label">Game Access</label>
@@ -42,7 +59,7 @@ function NewGame(params) {
                                 </div>
                                 <div className="form-input-separator col-sm-12">
                                     <Link className="d-grid gap-2 col-8 mx-auto" to={v.version === 1 ? "/saboteur/1/game/" + gameID : "/saboteur/2/game/" + gameID}>
-                                        <button className="btn btn-outline-dark font1-5rem">New Game</button>
+                                        <button onClick={createGame} className="btn btn-outline-dark font1-5rem">Create</button>
                                     </Link>
                                 </div>
                             </form>
