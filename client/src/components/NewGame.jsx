@@ -6,14 +6,25 @@ import Navbar from "./Navbar";
 function NewGame() {
     const [gameCard, updateState] = useState({
         playerName: "", 
-        gameName: ""
+        gameName: "",
+        gameAccess: "freeAccess",
+        numOfAPlayers: "",
+        timeFrame: "none"
     });
     const v = useParams();
     var gameID;
     console.log(v.version);
 
-    function handleChange() {
+    function handleChange(event) {
+        const {name, value} = event.target;
+        updateState(prevState => {
+            return {
+                ...prevState, 
+                [name]: value
+            }
+        });
 
+        console.log(gameCard);
     }
 
     function createGame(e) {
@@ -38,11 +49,11 @@ function NewGame() {
                                 </div>
                                 <div className="form-input-separator col-sm-12">
                                     <label for="gameName" className="form-label">Game name</label>
-                                    <input className="form-control" type="text" name="gameName" value={gameCard.gameName} placeholder="change text to hooks here!!!!"/>
+                                    <input className="form-control" type="text" name="gameName" onChange={handleChange} value={gameCard.gameName} placeholder="change text to hooks here!!!!"/>
                                 </div>
                                 <div className="form-input-separator col-sm-12">
                                     <label for="gameName" className="form-label">Game Access</label>
-                                    <select className="form-select" name="gameAccess">
+                                    <select className="form-select" name="gameAccess" onChange={handleChange} value={gameCard.gameAccess}>
                                         <option value="freeAccess">Free</option>
                                         <option value="passwordAccess">Password</option>
                                     </select>
@@ -51,11 +62,11 @@ function NewGame() {
                                     {/* (min) if Saboter - num = 3, if saboteur 2 - num = 2 
                                         (max) if Saboter - num = 10, if saboteur 2 - num = 12 */}
                                     <label for="numOfAPlayers" className="form-label">Number of a players</label>
-                                    <input className="form-control" type="number" name="numOfAPlayers" value="" min="3" max="10" placeholder="3 to 10 playes. Max value by default"/>
+                                    <input className="form-control" type="number" name="numOfAPlayers" onChange={handleChange} value={gameCard.numOfAPlayers} min="3" max="10" placeholder="3 to 10 playes. Max value by default"/>
                                 </div>
                                 <div className="form-input-separator col-sm-12">
-                                    <label for="timeFrame" className="form-label">The timeframe to make a move (min)</label>
-                                    <input className="form-control" type="text" name="timeFrame" value="" placeholder="change text to hooks here!!!!"/>
+                                    <label for="timeFrame" className="form-label">Set timeframe for a move (min)</label>
+                                    <input className="form-control" type="number" name="timeFrame" onChange={handleChange} value={gameCard.timeFrame} min="0" max="10" placeholder="0 mean No time frame"/>
                                 </div>
                                 <div className="form-input-separator col-sm-12">
                                     <Link className="d-grid gap-2 col-8 mx-auto" to={v.version === 1 ? "/saboteur/1/game/" + gameID : "/saboteur/2/game/" + gameID}>
