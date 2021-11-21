@@ -1,24 +1,27 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
-import Navbar from "./Navbar.jsx";
+import Navbar from "./additionaComponents/Navbar.jsx";
 import TableRow from "./additionaComponents/TableRow";
-import io from "socket.io-client";
-
-const socket = io.connect("http://localhost:4000");
 
 
-function GamesList(){
+
+function GamesList(param){
     const saboteurVersion = useParams(); // check the game version to request correct list of games from server
     const [gamesList, setGamesList] = useState();
+    const socketListener = "sendGamesList" + saboteurVersion.version;
     
-    socket.emit("getGamesList",saboteurVersion.version); // send request to the server for list of games
-    socket.on("sendGamesList", (arg) => {
-        setGamesList(
-            arg.map(
-                (element, indx) => <TableRow key={indx} num={indx + 1} name={element.gameName} playersNum={element.playerNum} access={element.access} />
-            )
-        );
-    }); // listen to respond from the server and update gamesList from useState render automaticaly list of games
+    useEffect(() => {
+        param.socket.once(socketListener, (arg) => {
+            setGamesList(
+                arg.map(
+                    (element, indx) => <TableRow key={indx} num={indx + 1} name={element.gameName} playersNum={element.maxPlayersNum} access={element.access} />
+                )
+            );
+        }); // listen to respond from the server and update gamesList from useState render automaticaly list of games
+    
+        param.socket.emit("getGamesList",saboteurVersion.version); // send request to the server for list of games
+    });
+    
     
     return (
         <div>

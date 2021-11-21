@@ -164,7 +164,7 @@ form {
 
 /* The game */
 .add-space-bottom{
-  padding-bottom: 60%;
+  padding-bottom: 30vh;
 }
 
 .board {
@@ -175,19 +175,37 @@ form {
   width: auto;
 }
 
+.card-array1 {
+  background-image: url(./images/pic1v5.jpg);
+}
+
+.card-array2 {
+  background-image: url(./images/pic2v5.jpg);
+}
+
+.card-gold-rewers {
+  background-position-x: -101px;
+  background-position-y: -142px;
+}
+
+.card-tunnel-rewers {
+  background-position-x: -201px;
+  background-position-y: -142px;
+}
+
+.card-enter {
+  background-position-x: -51px;
+}
+
 .field-card {
-  background-image: url(./images/saboteur1_cover.jpg);
-  background-position: center;
   background-repeat: no-repeat;
-  background-size: cover;
+  background-size: 352px; 
 }
 
 .field {
-  border-radius: 15px;
-  height: 9vh;
-  min-height: 67px;
-  width: 4vw;
-  min-width: 57px;
+  border-radius: 3px;
+  height: 70px;
+  width: 50px;
   background-color: #282c34;
 }
 
