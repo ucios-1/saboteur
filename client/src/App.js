@@ -19,7 +19,7 @@ function App() {
       <Route path="/" element={<Games />} />
       <Route path="/saboteur/:version" element={<GamesList socket={ socket } />} />
       <Route path="/saboteur/:version/new%20game" element={<NewGame socket={ socket } />} />
-      <Route path="/saboteur/:version/game/:gameID" element={<TheGame socket={ socket } />} />
+      <Route path="/saboteur/:version/game/:gameID/player/:player" element={<TheGame socket={ socket } />} />
     </Routes>
   );
 }

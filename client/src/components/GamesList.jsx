@@ -27,19 +27,21 @@ function GamesList(param){
         <div>
             <Navbar />
             <div className="container flex-centered-two-demention">
-                <table className="table table-light table-hover table-striped">
-                    <thead>
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Game name</th>
-                            <th scope="col">number of players</th>
-                            <th scope="col">Accsessable</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        { gamesList /* render games list here */ }
-                    </tbody>
-                </table>
+                <div className="table-container">
+                    <table className="table table-light table-hover table-striped">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Game name</th>
+                                <th scope="col">number of players</th>
+                                <th scope="col">Accsessable</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            { gamesList /* render games list here */ }
+                        </tbody>
+                    </table>
+                </div>
                 <Link 
                     className="d-grid gap-2 col-6 mx-auto" 
                     to={ useLocation().pathname === "/saboteur/1" ? "/saboteur/1/new%20game" : "/saboteur/2/new%20game" 

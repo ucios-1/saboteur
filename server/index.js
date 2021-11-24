@@ -3,7 +3,8 @@ const http = require("http").createServer(app);
 const io = require("socket.io")(http, {
     cors: {
         origin: "*"
-    }
+    }, 
+    pingTimeout: 60000
 });
 const { filter } = require("lodash");
 const _ = require("lodash");
@@ -11,12 +12,13 @@ const _ = require("lodash");
 var saboteur1List = [];
 var saboteur2List = []; //create list of games to render
 
-saboteur1List.push({gameID: "1", gameName: "new test game", maxPlayersNum: "12/15", access: "free",playersIDs: {},playersNames: {}, playersIDs: ["1"]});
-saboteur1List.push({gameID: "2", gameName: "second test game", maxPlayersNum: "10", access: "free", players: {}, playersIDs: ["2", "3"]});
+saboteur1List.push({gameID: "1", gameName: "new test game", maxPlayersNum: "12/15", access: "free",playersIDs: {},playersNames: {}, playersIDs: ["1"], players: [1]});
+saboteur1List.push({gameID: "2", gameName: "second test game", maxPlayersNum: "10", access: "free", players: {}, playersIDs: ["2", "3"], players:[1]});
 
 function addPlayerToGame(obj, playerID) {
     obj.playersIDs = [playerID]; //add additional parameter to the object
     obj.playersNames = [obj.playerName]; //add additional parameter to the object
+    obj.players = [ { id: playerID, name: obj.playerName } ]
     return obj;
 }
 
@@ -78,16 +80,16 @@ io.on("connection", socket => {
         socket.rooms.forEach((val) => { /* loop through the loop of the socket rooms */
             saboteur1List.map(el => {
                 if(el.gameID === val) { /* check if any of rooms is equal to gameIDs in saboter array, if true remove socked id from playersIDs array*/
-                    // check the index and remove playersName from array
-                    el.playersIDs = el.playersIDs.filter(el => el !== socket.id)
+                    // remove player from array if his id = to disconnected socket id
+                    el.players = el.players.filter(player => player.id !== socket.id);
                 }
             });
         });
 
-        // remove game record if playersIDs === 0
+        // remove game record if players.length === 0
         saboteur1List.map(el => {
-            if (el.playersIDs.length === 0) {
-                saboteur1List = saboteur1List.filter(element => element.playersIDs != 0 ); 
+            if (el.players.length === 0) {
+                saboteur1List = saboteur1List.filter(element => element.players != 0 ); 
             }
         });
         console.log(saboteur1List);

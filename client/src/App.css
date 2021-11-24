@@ -87,11 +87,11 @@ form {
 
 ::-webkit-scrollbar-thumb {
   border-radius: 5px;
-  background: #888;
+  background: #f7b320;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #555;
+  background: #bb8717;
 }
 
 /* Nav bar */
@@ -141,8 +141,11 @@ form {
 }
 
 /* Games List */
-.table {
+.table-container {
+  height: auto;
+  max-height: 60vh;
   margin-top: 8vh;
+  overflow-y: auto;
 }
 
 /* New Game */
@@ -202,6 +205,11 @@ form {
   background-size: 352px; 
 }
 
+.field-playing-card {
+  background-repeat: no-repeat;
+  background-size: 452px;
+}
+
 .field {
   border-radius: 3px;
   height: 70px;
@@ -258,16 +266,10 @@ form {
   overflow-y: scroll;
 }
 
-.playing-cards {
-  height: 50%;
-  margin: 1vh;
-}
-
 .playing-card {
-  height: 12vh;
-  width: calc(12vh * 0.8);
-  min-height: 65px;
-  min-width: 55px;
+  border-radius: 5px;
+  height: 90px;
+  width: 65px;
   margin: 1vh;
 }
 
@@ -275,6 +277,42 @@ form {
   border-top: #cfcfcf 2px solid;
   background-color: #282c34;
   margin: 5px;
+}
+
+@media (min-height: 800px) {
+  .card-gold-rewers {
+    background-position-x: -136px;
+    background-position-y: -191px;
+  }
+  
+  .card-tunnel-rewers {
+    background-position-x: -271px;
+    background-position-y: -191px;
+  }
+  
+  .card-enter {
+    background-position-x: -68px;
+  }
+
+  .field {
+    border-radius: 6px;
+    height: 95px;
+    width: 68px;
+  }
+  
+  .field-card {
+    background-size: 475px; 
+  }
+  
+  .field-playing-card {
+    background-size: 600px;
+  }
+
+  .playing-card {
+    border-radius: 8px;
+    height: 120px;
+    width: 86px;
+  }
 }
 
 /* messanger */

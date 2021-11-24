@@ -2,7 +2,7 @@ function FormNumInput (promp) {
     return (
         <div className="form-input-separator col-sm-12">
             <label 
-                for={ promp.forInput }
+                htmlFor={ promp.forInput }
                 className="form-label"
             >
                 { promp.labelText }

@@ -40,7 +40,7 @@ function NewGame(param) {
         param.socket.emit("addGame", v.version, gameCard, (serverResp) => {
             if (serverResp.status === "ok") {
                 // go to Game page
-                navigate("/saboteur/" + v.version + "/game/" + gameCard.gameID);
+                navigate("/saboteur/" + v.version + "/game/" + gameCard.gameID + "/player/" + gameCard.playerName);
             } else {
                 console.log("wrong server respond");
             }
@@ -72,7 +72,7 @@ function NewGame(param) {
                                     placeholder={ gameCard.gameName }
                                 />
                                 <div className="form-input-separator col-sm-12">
-                                    <label for="gameName" className="form-label">Game Access</label>
+                                    <label htmlFor="gameName" className="form-label">Game Access</label>
                                     <select className="form-select" name="gameAccess" onChange={handleChange} value={gameCard.gameAccess}>
                                         <option value="free">Free</option>
                                         <option value="password">Password</option>
