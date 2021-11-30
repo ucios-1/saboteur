@@ -279,7 +279,43 @@ form {
   margin: 5px;
 }
 
-@media (min-height: 800px) {
+@media (min-height: 850px) {
+  .card-gold-rewers {
+    background-position-x: -130px;
+    background-position-y: -183px;
+  }
+  
+  .card-tunnel-rewers {
+    background-position-x: -260px;
+    background-position-y: -184px;
+  }
+  
+  .card-enter {
+    background-position-x: -66px;
+  }
+
+  .field {
+    border-radius: 6px;
+    height: 90px;
+    width: 64px;
+  }
+  
+  .field-card {
+    background-size: 455px; 
+  }
+  
+  .field-playing-card {
+    background-size: 600px;
+  }
+
+  .playing-card {
+    border-radius: 8px;
+    height: 120px;
+    width: 86px;
+  }
+}
+
+@media (min-height: 950px) {
   .card-gold-rewers {
     background-position-x: -136px;
     background-position-y: -191px;

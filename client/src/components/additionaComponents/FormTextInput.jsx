@@ -9,7 +9,7 @@ function FormTextInput(promp) {
             </label>
             <input 
                 className="form-control" 
-                type="text" 
+                type={ promp.type } 
                 name={ promp.inputName } 
                 onChange={ promp.passFunction } 
                 value={ promp.passValue } 

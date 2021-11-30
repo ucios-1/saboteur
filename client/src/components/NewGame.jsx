@@ -38,7 +38,7 @@ function NewGame(param) {
         e.preventDefault();
 
         param.socket.emit("addGame", v.version, gameCard, (serverResp) => {
-            if (serverResp.status === "ok") {
+            if (serverResp.status === "created") {
                 // go to Game page
                 navigate("/saboteur/" + v.version + "/game/" + gameCard.gameID + "/player/" + gameCard.playerName);
             } else {
@@ -58,6 +58,7 @@ function NewGame(param) {
                                 <FormTextInput 
                                     forInput="playerName" 
                                     labelText="Player name" 
+                                    type="text" 
                                     inputName="playerName" 
                                     passFunction={ handleChange } 
                                     passValue={ gameCard.playerName }
@@ -66,6 +67,7 @@ function NewGame(param) {
                                 <FormTextInput 
                                     forInput="gameName" 
                                     labelText="Game name" 
+                                    type="text" 
                                     inputName="gameName" 
                                     passFunction={ handleChange } 
                                     passValue={ gameCard.gameName }
