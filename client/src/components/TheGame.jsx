@@ -72,12 +72,21 @@ function TheGame(param) {
     function handleChange(e) {
         setPlayerMssg(e.target.value);
     }
+
+    useEffect(() => {
+        param.socket.on("new joiner", (arg) => {
+            console.log("listen");
+            setGameData(arg);
+        });
+        // remove listener to avoid multiple echoes
+        return param.socket.off("new joiner");
+    });
     
     useEffect(() => {
         param.socket.emit("getGameData", pathData.version, pathData.gameID, (serverResp) => {
             setGameData(serverResp); // render players list
         });
-    }, []);
+    }, [param.socket, pathData.gameID, pathData.version]);
 
     return (
         <div>
@@ -133,6 +142,9 @@ function TheGame(param) {
                                 if (el) {
                                     return <Player key={indx} name={ el.name } gold={ indx } />
                                 }
+                                else {
+                                    return null
+                                }
                             }) }
                             
                             <li className="list-group-item list-group-item-dark">A fourth item <span className="badge bg-warning text-dark rounded-pill">14</span></li>
@@ -146,7 +158,7 @@ function TheGame(param) {
                                         { chat.map((mssg, indx) => {
                                             return (
                                                 <Message 
-                                                    key= { indx }
+                                                    key= { "message: " + indx }
                                                     name={ mssg.name }
                                                     time={ mssg.time }
                                                     mssg={ mssg.mssg }

@@ -77,7 +77,8 @@ function NewGame(param) {
                                     <label htmlFor="gameName" className="form-label">Game Access</label>
                                     <select className="form-select" name="gameAccess" onChange={handleChange} value={gameCard.gameAccess}>
                                         <option value="free">Free</option>
-                                        <option value="password">Password</option>
+                                        {/* password option disabled. waiting for implementation */}
+                                        <option value="password" disabled>Password</option>
                                     </select>
                                 </div>
                                 <FormNumInput 

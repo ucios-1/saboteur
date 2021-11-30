@@ -7,7 +7,7 @@ import supervillains from "supervillains"; // create random user name
 
 
 function GamesList(param){
-    const user = supervillains.random(); // sent name for user
+    const user = supervillains.random(); // set name for user
     const saboteurVersion = useParams(); // check the game version to request correct list of games from server
     const [gamesList, setGamesList] = useState();
     const [userCredentials, setUserCredentials] = useState({
@@ -20,24 +20,33 @@ function GamesList(param){
     const navigate = useNavigate();
 
     function handleChange(e) {
-        console.log(e.target.value);
         const {name, value} = e.target;
         setUserCredentials(prevValue => {
             return {
                 ...prevValue, 
-                [name]: value}
+                [name]: value
+            }
         });
     }
 
-    const gameEnter = useCallback((id) => {
-        // finish implementation logic for game entering
-        console.log(userCredentials);
-        param.socket.emit("gameConnect", id, userCredentials.name, userCredentials.password, serverResp => {
-            if (serverResp === "welcome") {
-                navigate("/saboteur/" + saboteurVersion.version + "/game/" + id + "/player/" + userCredentials.name );
+    // when button "Join" is clicked check if name field is feeled. If not assign a random value
+    const checkUserName = useCallback(userName => {
+        if(userName === "") {
+            return user;
+        } else {
+            return userName
+        }
+    }, [user]);
+
+    const gameEnter = useCallback(() => {
+        userCredentials.name = checkUserName(userCredentials.name);
+
+        param.socket.emit("gameConnect", saboteurVersion.version, userCredentials.id, userCredentials.name, userCredentials.password, serverResp => {
+            if (serverResp.status === "welcome") {
+                navigate("/saboteur/" + saboteurVersion.version + "/game/" + userCredentials.id + "/player/" + userCredentials.name );
             }
         });
-    },[param.socket, userCredentials, navigate, saboteurVersion.version]);
+    },[userCredentials, param.socket, navigate, saboteurVersion.version, checkUserName]);
     
     useEffect(() => {
         param.socket.emit("getGamesList",saboteurVersion.version); // send request to the server for list of games
@@ -70,7 +79,7 @@ function GamesList(param){
         <div>
             <Navbar />
             {/* Modal part */}
-            <div className="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div className="modal fade" id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div className="modal-dialog modal-dialog-centered">
                     <div className="modal-content">
                         <div className="modal-header">
@@ -79,17 +88,27 @@ function GamesList(param){
                         </div>
                         <div className="modal-body">
                             <FormTextInput 
-                                forInput="playerName" 
+                                forInput="name" 
                                 labelText="Player name" 
                                 type="text" 
-                                inputName="playerName" 
+                                inputName="name" 
                                 passFunction={ handleChange } 
                                 passValue={ userCredentials.name }
                                 placeholder={ user }
                             />
+                            { userCredentials.access === "password" && <FormTextInput 
+                                                                            forInput="password" 
+                                                                            labelText="Password" 
+                                                                            type="password" 
+                                                                            inputName="password" 
+                                                                            passFunction={ handleChange } 
+                                                                            passValue={ userCredentials.password }
+                                                                            placeholder={ "" }
+                                                                        /> 
+                            }
                         </div>
                         <div className="modal-footer">
-                            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Go</button>
+                            <button onClick={ gameEnter } type="button" className="btn btn-secondary" data-bs-dismiss="modal">Join</button>
                         </div>
                     </div>
                 </div>

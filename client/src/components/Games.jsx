@@ -10,7 +10,7 @@ function Games(){
             <div className="container">
                 <header className="games">
                     <Link to="/saboteur/1"><img src={saboteur1} className="saboteur-cover" alt="Saboteur cover page" /></Link>
-                    <Link to="/saboteur/2"><img src={saboteur2} className="saboteur-cover" alt="Saboteur second part cover page" /></Link>             
+                    {/* <Link className="disabled-link" to="/saboteur/2"> */ }<img src={saboteur2} className="saboteur-cover disabled-link" alt="Saboteur second part cover page" /> { /* </Link>              */}
                 </header>
             </div>
         </div>
