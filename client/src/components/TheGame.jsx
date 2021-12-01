@@ -72,20 +72,24 @@ function TheGame(param) {
     function handleChange(e) {
         setPlayerMssg(e.target.value);
     }
-
-    useEffect(() => {
-        param.socket.on("new joiner", (arg) => {
-            console.log("listen");
-            setGameData(arg);
-        });
-        // remove listener to avoid multiple echoes
-        return param.socket.off("new joiner");
-    });
     
     useEffect(() => {
         param.socket.emit("getGameData", pathData.version, pathData.gameID, (serverResp) => {
             setGameData(serverResp); // render players list
         });
+
+        // update gameData when new player join the game
+        param.socket.on("joiners update", (newGameData) => {
+            console.log("new player joined"); // remove it later
+            setGameData(newGameData);
+        });
+
+        param.socket.on("player left the game", (playerName) => {
+            console.log("Player " + playerName + " left the game");
+        });
+        
+        // remove listener to avoid multiple echoes
+        return 
     }, [param.socket, pathData.gameID, pathData.version]);
 
     return (
