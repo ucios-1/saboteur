@@ -79,7 +79,7 @@ io.on("connection", socket => {
                         socket.join(el.gameID); // join the game room
                         el.players.push({ id: socket.id, name: playerName }); // add socket to the list of the game players
                         callback({status: "welcome"}); // allow user redirect to the game page
-                        socket.to(el.gameID).emit("joiners update", el); // send to all sockets in room updated game data 
+                        socket.to(el.gameID).emit("joiners update", el, playerName); // send to all sockets in room updated game data 
                     }
                 });
             }
@@ -91,6 +91,11 @@ io.on("connection", socket => {
         
     });
 
+    socket.on("game message", (gameMessage, gameRoom) => {
+        gameMessage.align = "mssg message-left";
+        socket.to(gameRoom).emit("game message", gameMessage)
+    });
+
     socket.on("disconnecting", () => {
         console.log("Socket disconnected from: " + socket.id) // can be removed later
         
@@ -99,24 +104,21 @@ io.on("connection", socket => {
             saboteur1List.map(el => {
                 if(el.gameID === val) { /* check if any of rooms is equal to gameIDs in saboter array, if true remove socked id from playersIDs array*/
                     // inform sockets in room about disconnecting
-                    el.players.map(player => 
-                        player.id === socket.id && socket.to(el.gameID).emit("player left the game", player.name)
-                    ); 
+                    var somePlayer;
+                    el.players.map(player => {somePlayer = player.id === socket.id && player.name}); 
                     // remove player from array if his id = to disconnected socket id
                     el.players = el.players.filter(player => player.id !== socket.id);
-                    socket.to(el.gameID).emit("joiners update", el); // send to all sockets in room updated game data 
+                    socket.to(el.gameID).emit("joiners update", el, somePlayer); // send to all sockets in room updated game data 
                 }
             });
 
             saboteur2List.map(el => {
                 if(el.gameID === val) { /* check if any of rooms is equal to gameIDs in saboter array, if true remove socked id from playersIDs array*/
                     // inform sockets in room about disconnecting
-                    el.players.map(player => 
-                        player.id === socket.id && socket.to(el.gameID).emit("player left the game", player.name, el)
-                    ); 
+                    var somePlayer = el.players.map(player => player.id === socket.id && player.name); 
                     // remove player from array if his id = to disconnected socket id
                     el.players = el.players.filter(player => player.id !== socket.id);
-                    socket.to(el.gameID).emit("joiners update", el); // send to all sockets in room updated game data 
+                    socket.to(el.gameID).emit("joiners update", el, somePlayer); // send to all sockets in room updated game data 
                 }
             });
         });

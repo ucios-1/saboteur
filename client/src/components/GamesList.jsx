@@ -30,12 +30,8 @@ function GamesList(param){
     }
 
     // when button "Join" is clicked check if name field is feeled. If not assign a random value
-    const checkUserName = useCallback(userName => {
-        if(userName === "") {
-            return user;
-        } else {
-            return userName
-        }
+    const checkUserName = useCallback( userName => {
+        return userName === "" ?  user : userName 
     }, [user]);
 
     const gameEnter = useCallback(() => {
@@ -83,7 +79,7 @@ function GamesList(param){
                 <div className="modal-dialog modal-dialog-centered">
                     <div className="modal-content">
                         <div className="modal-header">
-                            <h5 className="modal-title" id="exampleModalLabel">Modal title</h5>
+                            <h5 className="modal-title" id="exampleModalLabel">Please enter your credentials</h5>
                             <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div className="modal-body">

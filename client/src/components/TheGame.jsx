@@ -59,6 +59,8 @@ function TheGame(param) {
 
         updateChat((prevMssg) => [...prevMssg, mssg]);
         setPlayerMssg("");
+
+        param.socket.emit("game message", mssg, gameData.gameID);
     }
 
     // do Click event if Shift and Enter are pressed
@@ -74,27 +76,62 @@ function TheGame(param) {
     }
     
     useEffect(() => {
+        const modalBttn = document.getElementById("toggleModal");
+        const modalTxt = document.getElementById("joinORleft");
+    
         param.socket.emit("getGameData", pathData.version, pathData.gameID, (serverResp) => {
             setGameData(serverResp); // render players list
         });
 
         // update gameData when new player join the game
-        param.socket.on("joiners update", (newGameData) => {
-            console.log("new player joined"); // remove it later
+        param.socket.on("joiners update", (newGameData, playerName) => {
+            if(gameData.players.length < newGameData.players.length) {
+                modalTxt.innerHTML = "Player " + playerName + " joined the game";
+                modalBttn.click();
+            } else {
+                modalTxt.innerHTML = "Player " + playerName + " left the game";
+                modalBttn.click();
+            }
+            
             setGameData(newGameData);
         });
 
-        param.socket.on("player left the game", (playerName) => {
-            console.log("Player " + playerName + " left the game");
+        param.socket.on("game message", mssg => {
+            const time = new Date();
+            mssg.time = time.getHours() + ":" + time.getMinutes();
+            updateChat((prevMssg) => [...prevMssg, mssg]);
         });
+
         
         // remove listener to avoid multiple echoes
-        return 
-    }, [param.socket, pathData.gameID, pathData.version]);
+        return () => {
+            if(param.soket){
+                param.soket.off("game message");
+                param.soket.off("joiners update");
+                param.soket.off("getGameData");
+            }
+        };
+    }, [gameData.players.length, param.socket, param.soket, pathData.gameID, pathData.version]);
 
     return (
         <div>
             <Navbar />
+            {/* Modal part */}
+            <div className="modal fade" id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div className="modal-dialog modal-dialog-centered">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h5 className="modal-title" id="exampleModalLabel">Player update</h5>
+                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div className="modal-body">
+                            <p id="joinORleft"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Games List part */}
             <div className="container">
                 <div className="row row-cols-1 row-cols-sm-3 flex-center-hor">
                     <div className="col-sm-12 col-md-1">
@@ -199,6 +236,7 @@ function TheGame(param) {
                     </div>
                 </div>
             </div>
+            <button style={{display: "none"}} id="toggleModal" data-bs-toggle="modal" data-bs-target="#exampleModal"></button>
         </div>
     );
 }
