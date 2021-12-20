@@ -25,6 +25,10 @@ form {
   height: auto;
 }
 
+.position-absolute{
+  position: absolute;
+}
+
 .container-fluid {
   padding: 0;
 }
@@ -182,6 +186,8 @@ form {
   width: auto;
 }
 
+/* Card arrays */
+
 .card-array1 {
   background-image: url(./images/pic1v5.jpg);
 }
@@ -190,10 +196,157 @@ form {
   background-image: url(./images/pic2v5.jpg);
 }
 
-.card-gold-rewers {
-  background-position-x: -101px;
-  background-position-y: -142px;
+/* Dead ends */
+
+.deadend-left-and-right {
+  background-position-x: 0;
+  background-position-y: 0;
 }
+
+.deadend-crossroads-x {
+  background-position-x: 99.9%;
+  background-position-y: 0.3%;
+}
+
+.deadend-crossroads-t-hor {
+  background-position-x: 50.1%;
+  background-position-y: 0;
+}
+
+.deadend-crossroads-t-ver {
+  background-position-x: -250px;
+  background-position-y: 0;
+}
+
+.deadend-down {
+  background-position-x: 99.9%;
+  background-position-y: -91px;
+}
+
+.deadend-down-and-left {
+  background-position-x: 83.3%;
+  background-position-y: -71px;
+}
+
+.deadend-down-and-right {
+  background-position-x: 33.5%;
+  background-position-y: 0.3%;
+}
+
+.deadend-left {
+  background-position-x: 83.3%;
+  background-position-y: 0;
+}
+
+.deadend-up-and-down {
+  background-position-x: 16.8%;
+  background-position-y: 0.3%;
+}
+
+/* Destination cards */
+
+.gold-rewers {
+  background-position-x: -101px;
+  background-position-y: -141px;
+}
+
+.gold-hidden {
+  background-position-x: -101px;
+  background-position-y: 0;
+}
+
+.stone-turn-left-hidden {
+  background-position-x: 50.1%;
+}
+
+.stone-turn-right-hidden {
+  background-position-x: -201px;
+}
+
+.map-card {
+  background-position-x: 50.1%;
+  background-position-y: 50%;
+}
+
+/* Fix cards */
+.fix-latern {
+  background-position-x: 50%;
+  background-position-y: 99.5%;
+}
+
+.fix-pickaxe {
+  background-position-x: -67px;
+  background-position-y: 99.5%;
+}
+
+.fix-latern-and-trolley {
+  background-position-x: -250px;
+  background-position-y: 99.5%;
+}
+
+.fix-pickaxe-and-latern {
+  background-position-x: 99.9%;
+  background-position-y: 99.9%;
+}
+
+.fix-pickaxe-and-trolley {
+  background-position-x: -251px;
+  background-position-y: 99.9%;
+}
+
+.fix-trolley {
+  background-position-x: 33.5%;
+  background-position-y: 99.5%;
+}
+
+/* Prise cards */
+
+.prise-1 {
+  background-position-x: 0;
+  background-position-y: 0;
+}
+
+.prise-2 {
+  background-position-x: 99.9%;
+  background-position-y: 49.5%;
+}
+
+.prise-3 {
+  background-position-x: 83.3%;
+  background-position-y: 49.5%;
+}
+
+/* Roles */
+.dwarf {
+  background-position-x: 99.9%;
+}
+
+.saboteur {
+  background-position-x: 83.3%;
+}
+
+/* Screw up cards */
+.screw-up-latern {
+  background-position-x: 0.3%;
+  background-position-y: 49.5%;
+}
+
+.screw-up-pickaxe {
+  background-position-x: 17%;
+  background-position-y: 50%;
+}
+
+.screw-up-trolley {
+  background-position-x: 33.5%;
+  background-position-y: 50%;
+}
+
+.tunnel-collapse {
+  background-position-x: 66.6%;
+  background-position-y: 50%;
+}
+
+/* Tunnel cards */
 
 .card-tunnel-rewers {
   background-position-x: -201px;
@@ -204,6 +357,43 @@ form {
   background-position-x: -51px;
 }
 
+.tunnel-across {
+  background-position-x: 83.3%;
+  background-position-y: 99.9%;
+}
+
+.tunnel-crossroads-x {
+  background-position-x: 99.9%;
+  background-position-y: 99.9%;
+}
+
+.tunnel-crossroads-t-hor {
+  background-position-x: 50.1%;
+  background-position-y: 50%;
+}
+
+.tunnel-crossroads-t-ver {
+  background-position-x: 66.5%;
+  background-position-y: 49.5%;
+}
+
+.tunnel-straightforward {
+  background-position-x: 33.5%;
+  background-position-y: 49.5%;
+}
+
+.tunnel-turn-right {
+  background-position-x: -69px;
+  background-position-y: 49.5%;
+}
+
+.tunnel-turn-left {
+  background-position-x: 0.3%;
+  background-position-y: 49.5%;
+}
+
+/* else */
+
 .field-card {
   background-repeat: no-repeat;
   background-size: 352px; 
@@ -211,11 +401,11 @@ form {
 
 .field-playing-card {
   background-repeat: no-repeat;
-  background-size: 452px;
+  background-size: 450px;
 }
 
 .field {
-  border-radius: 3px;
+  border-radius: 4px;
   height: 70px;
   width: 50px;
   background-color: #282c34;
@@ -271,10 +461,14 @@ form {
 }
 
 .playing-card {
-  border-radius: 5px;
+  border-radius: 6px;
   height: 90px;
-  width: 65px;
-  margin: 1vh;
+  width: 60px;
+  margin: 8px;
+}
+
+.playing-card-active {
+  border: #f7b320 3px solid;
 }
 
 .row.fixed-bottom {
@@ -295,7 +489,7 @@ form {
   }
   
   .card-enter {
-    background-position-x: -66px;
+    background-position-x: 16.8%;
   }
 
   .field {

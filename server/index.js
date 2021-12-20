@@ -6,11 +6,32 @@ const io = require("socket.io")(http, {
     }, 
     pingTimeout: 60000
 });
+const e = require("cors");
 const _ = require("lodash");
 const PORT = process.env.PORT || 4000;
 
 var saboteur1List = [];
 var saboteur2List = []; //create list of games to render
+var waist = [
+                "tunnel-collapse", "tunnel-collapse", "tunnel-collapse", 
+                "map-card", "map-card", "map-card", "map-card", "map-card", "map-card",
+                "screw-up-latern", "screw-up-latern", "screw-up-latern",
+                "screw-up-pickaxe", "screw-up-pickaxe", "screw-up-pickaxe",
+                "screw-up-trolley", "screw-up-trolley", "screw-up-trolley",
+                "fix-latern", "fix-latern", 
+                "fix-pickaxe", "fix-pickaxe", 
+                "fix-trolley", "fix-trolley", 
+                "fix-pickaxe-and-trolley", "fix-pickaxe-and-latern", "fix-latern-and-trolley",
+                "tunnel-crossroads-x", "tunnel-crossroads-x", "tunnel-crossroads-x", "tunnel-crossroads-x", "tunnel-crossroads-x",
+                "tunnel-crossroads-t-hor", "tunnel-crossroads-t-hor", "tunnel-crossroads-t-hor", "tunnel-crossroads-t-hor", "tunnel-crossroads-t-hor",
+                "tunnel-crossroads-t-ver", "tunnel-crossroads-t-ver", "tunnel-crossroads-t-ver", "tunnel-crossroads-t-ver", "tunnel-crossroads-t-ver",
+                "tunnel-straightforward", "tunnel-straightforward", "tunnel-straightforward", "tunnel-straightforward",
+                "tunnel-across", "tunnel-across", "tunnel-across",
+                "tunnel-turn-right", "tunnel-turn-right", "tunnel-turn-right", "tunnel-turn-right",
+                "tunnel-turn-left", "tunnel-turn-left", "tunnel-turn-left", "tunnel-turn-left", "tunnel-turn-left",
+                "deadend-up-and-down", "deadend-left-and-right", "deadend-crossroads-x", "deadend-crossroads-t-ver", "deadend-crossroads-t-hor",
+                "deadend-down", "deadend-down-and-left", "deadend-down-and-right", "deadend-left"
+            ];
 
 function addPlayerToGame(obj, playerID) {
     obj.players = [ { id: playerID, name: obj.playerName } ]; // add socket.id and player name to the list of objects to the particuler game
@@ -52,6 +73,7 @@ io.on("connection", socket => {
 
     socket.on("addGame", (v, arg, callback) => {
         arg = addPlayerToGame(arg, socket.id);
+        arg.waist = waist;
 
         if (v === "1") {
             saboteur1List.push(_.omit(arg, "playerName"));
@@ -70,7 +92,6 @@ io.on("connection", socket => {
     // allow user connect to chosen game
     socket.on("gameConnect", (v, id, playerName, password, callback) => {
         if (v === "1") {
-            console.log(password);
             if (password !== "") {
                 // logic for password
             } else {
@@ -80,13 +101,39 @@ io.on("connection", socket => {
                         el.players.push({ id: socket.id, name: playerName }); // add socket to the list of the game players
                         callback({status: "welcome"}); // allow user redirect to the game page
                         socket.to(el.gameID).emit("joiners update", el, playerName); // send to all sockets in room updated game data 
+
+                        // if game is full (players.lenght === maxPlayersNum) start the game
+                        if(el.players.length == el.maxPlayersNum) {
+                            el.players.map(player => {
+                                const playerCards = [];
+                                for (let i = 0; i < 6; i++) {
+                                    const num = Math.floor(Math.random() * el.waist.length);
+                                    playerCards.push(el.waist[num]);
+                                    el.waist = el.waist.filter((card, index) => index !== num);
+                                    
+                                }
+                                player.cards = playerCards;
+                                io.to(player.id).emit("game waist update", playerCards);
+                            });
+                        }
                     }
                 });
             }
         } else if (v === "2") {
-
+            if (password !== "") {
+                // logic for password
+            } else {
+                saboteur2List.map(el => {
+                    if (el.gameID === id) {
+                        socket.join(el.gameID); // join the game room
+                        el.players.push({ id: socket.id, name: playerName }); // add socket to the list of the game players
+                        callback({status: "welcome"}); // allow user redirect to the game page
+                        socket.to(el.gameID).emit("joiners update", el, playerName); // send to all sockets in room updated game data 
+                    }
+                });
+            }
         } else {
-
+            callback({status: "version undefined"});
         }
         
     });
@@ -134,7 +181,7 @@ io.on("connection", socket => {
 
         saboteur2List.map(el => {
             if (el.players.length === 0) {
-                saboteur1List = saboteur1List.filter(element => element.players != 0 ); 
+                saboteur2List = saboteur2List.filter(element => element.players != 0 ); 
                 // emit new gamelist to all users
                 io.emit("sendGamesList2", saboteur2List);
             }

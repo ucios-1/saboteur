@@ -20,7 +20,7 @@ function NewGame(param) {
         playerName: user, 
         gameName: supervillains.random(),
         access: "free",
-        maxPlayersNum: "10",
+        maxPlayersNum: "3",
         timeFrame: "0"
     }); // js object with data to be send to server for new game registration
 

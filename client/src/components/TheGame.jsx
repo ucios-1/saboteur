@@ -3,15 +3,17 @@ import { useParams } from "react-router-dom";
 import Navbar from "./additionaComponents/Navbar";
 import Player from "./additionaComponents/PlayerForChatlist";
 import Message from "./additionaComponents/ChatMessage";
+import PlayingCard from "./additionaComponents/PlayingCard";
 
 
 
 function TheGame(param) {
-    const playingCards = [], playingField = [];
+    const playingField = [], goldDestination = [];
     const pathData = useParams();
     const [ viewWidth, updateClasses ] = useState(window.visualViewport.width);
     const [ chat, updateChat ] = useState([]);
     const [ playerMssg, setPlayerMssg ] = useState("");
+    const [ playerCards, setPlayerCards ] = useState([]);
     const [ gameData, setGameData ] = useState({
         gameID: "",
         playerName: "", 
@@ -19,23 +21,58 @@ function TheGame(param) {
         access: "",
         maxPlayersNum: "",
         timeFrame:"", 
-        players: [{name: "" }]
+        players: [{name: ""}]
     });
     const thisPlayer =  pathData.player;
     
 
-    for (let i = 0; i < 6; i++) {
-        playingCards.push(<div draggable="true" className="field field-card playing-card card-array1 field-playing-card"></div>);
+    /*
+        trzeba zrobic liste z 45 elementow
+        kazdy element musi miec swoje id
+        do kazdego elementu trzeba przepisac karte
+        karte mozna zmieniac w odniesieniu do elementu
+
+        potrzebuję jeszcze liste kart w talii 
+
+        dokończyć logikę gry!!!!!!!!!!!!!!!!!!!!!!!!!
+        przeciąganie kart na pole! - działa. Trzeba jeszcze poprawić pozyciowanie kart
+        jeszcze trzeba ogarnąc zmiane kart przez click!!! 
+        pass
+        sprawdzanie, czy karta tu może leżeć - jak??????
+
+        zaciemnić karty pola gry
+
+        dopasować rozmiar kart do pola 
+        sprawdzić różne szerokości ekranów
+
+        napisac logikę, że jak szerokość ekranu jest < niż 700 to:
+        - aktywnych graczy przenieść do offcanvas
+            - kazdy gracz powinien miec:
+                - ikonki pokazujące co zepsute, a co nie
+                - ile ma złota
+            - trzeba pokazać, który jest aktywny, a który jest następny
+        - króra jest runda
+        - ile zostało kart w talii
+        -przenieść czat do offcanvas
+
+        jeżeli szerokośc jest > niż 700, wyłoczyc offcanvas i pokazać wszystko na polu
+    */
+    for (let i = 0; i < 5; i++){
+        if(i === 0 || i === 2 || i === 4) {
+            goldDestination.push(<div key={"gold" + i} id={"gold" + i} className="col field field-card card-array2 gold-hidden"></div>);
+        } else {
+            goldDestination.push(<div key={"gold" + i} id={"gold" + i} className="col field"></div>);
+        }
     }
     for (let i = 0; i < 45; i++) {
-        if(i === 3 || i === 1 || i === 40 || i === 41 || i === 43 || i === 44) {
-            playingField.push(<div className="col field"></div>); // clack field 
+        if(i === 3 || i === 1) {
+            playingField.push(<div key={i} id={i} className="col field" onDragOver={allowDrag} onDrop={endDrop}></div>); // clack field 
         } else if (i === 0 || i === 2 || i === 4) {
-            playingField.push(<div className="col field field-card card-array1 card-gold-rewers"></div>); // gold cards
+            playingField.push(<div key={i} id={i} className="col field field-card card-array1 gold-rewers" onDragOver={allowDrag} onDrop={endDrop}></div>); // gold cards
         } else if (i === 42) {
-            playingField.push(<div className="col field field-card card-array2 card-enter"></div>); // enter to the tunnel
+            playingField.push(<div key={i} id={i} className="col field field-card card-array2 card-enter" onDragOver={allowDrag} onDrop={endDrop}></div>); // enter to the tunnel
         } else {
-            playingField.push(<div className="col field field-card card-array1 card-tunnel-rewers"></div>); // tunnel card
+            playingField.push(<div key={i} id={i} className="col field field-card card-array1 card-tunnel-rewers" onDragOver={allowDrag} onDrop={endDrop}></div>); // tunnel card
         }
         
     }
@@ -74,44 +111,88 @@ function TheGame(param) {
     function handleChange(e) {
         setPlayerMssg(e.target.value);
     }
+
+    // drug and drop logic
+    function allowDrag(ev) {
+        ev.preventDefault();
+    }
+
+    function startDrag(ev) {
+        if(ev.target.classList.contains("playing-card-active")) {
+            ev.target.classList.remove("playing-card-active");
+            ev.dataTransfer.setData("text", ev.target.className);
+        } else {
+            ev.dataTransfer.setData("text", ev.target.className);
+        }
+    }
+
+    function endDrop(ev) {
+        ev.preventDefault();
+        let newClassName = ev.dataTransfer.getData("text");
+        newClassName = newClassName.replace("field-playing-card", "field-card").replace(" playing-card", "");
+        ev.target.className = newClassName;
+    }
     
     useEffect(() => {
+        // test - teraz mogę zmieniać karty an polu!!!
+        document.getElementById("2").className = "col ";
+        // end test
         const modalBttn = document.getElementById("toggleModal");
         const modalTxt = document.getElementById("joinORleft");
+        const modalTxt2 = document.getElementById("letTheGameBegin");
     
         param.socket.emit("getGameData", pathData.version, pathData.gameID, (serverResp) => {
             setGameData(serverResp); // render players list
+            console.log(serverResp);
         });
 
         // update gameData when new player join the game
         param.socket.on("joiners update", (newGameData, playerName) => {
-            if(gameData.players.length < newGameData.players.length) {
+            if(newGameData.maxPlayersNum == newGameData.players.length) {
+                modalTxt.innerHTML = "Player " + playerName + " joined the game";
+                modalTxt2.innerHTML = "Let the game BEGIN!";
+                modalBttn.click();
+            } else if (gameData.players.length < newGameData.players.length) {
                 modalTxt.innerHTML = "Player " + playerName + " joined the game";
                 modalBttn.click();
             } else {
                 modalTxt.innerHTML = "Player " + playerName + " left the game";
+                modalTxt2.innerHTML = "";
                 modalBttn.click();
             }
-            
+
             setGameData(newGameData);
         });
 
-        param.socket.on("game message", mssg => {
+        // update fields
+        param.socket.on("game field update", () => {});
+        // update playing cards
+        param.socket.on("game waist update", (cardArray) => {
+            setPlayerCards(prevValue => {
+                return [
+                    ...prevValue, 
+                    ...cardArray
+                ]
+            });
+            
+        });
+
+        // listen for messages from other users and update the chat
+        param.socket.on("game message", (mssg) => {
             const time = new Date();
             mssg.time = time.getHours() + ":" + time.getMinutes();
             updateChat((prevMssg) => [...prevMssg, mssg]);
         });
 
         
-        // remove listener to avoid multiple echoes
+        // remove listeners to avoid multiple echoes
         return () => {
-            if(param.soket){
-                param.soket.off("game message");
-                param.soket.off("joiners update");
-                param.soket.off("getGameData");
-            }
-        };
-    }, [gameData.players.length, param.socket, param.soket, pathData.gameID, pathData.version]);
+            param.socket.off("game message");
+            param.socket.off("joiners update");
+            param.socket.off("game field update");
+            param.socket.off("game waist update");
+        }
+    }, [param.socket, gameData.players.length, pathData.gameID, pathData.version]);
 
     return (
         <div>
@@ -126,6 +207,7 @@ function TheGame(param) {
                         </div>
                         <div className="modal-body">
                             <p id="joinORleft"></p>
+                            <p id="letTheGameBegin"></p>
                         </div>
                     </div>
                 </div>
@@ -135,7 +217,8 @@ function TheGame(param) {
             <div className="container">
                 <div className="row row-cols-1 row-cols-sm-3 flex-center-hor">
                     <div className="col-sm-12 col-md-1">
-                        <div className={(viewWidth < 700) ? "" : "row" }>  { /* roww with game status icons */ }
+                        { /* row with game status icons */ }
+                        <div className={(viewWidth < 700) ? "" : "row" }>  
                             <i className="icon icon-active fas fa-dolly-flatbed"></i>
                             <i className="icon icon-deactive fas fa-hammer"></i>
                             <i className="icon icon-active far fa-lightbulb"></i>
@@ -155,14 +238,28 @@ function TheGame(param) {
                     </div>
                     <div className="col-sm-12 col-md-6"> { /* game field */ }
                         <div className="flex-center-hor col">
-                            <div className={(viewWidth < 700) ? "board add-space-bottom" : "board" }>
+                            <div className={(viewWidth < 700) ? "board add-space-bottom position-absolute" : "board position-absolute" }>
                                 {playingField}
+                            </div>
+                        </div>
+                        <div className="flex-center-hor col">
+                            <div className= "board">
+                                {goldDestination}
                             </div>
                         </div>
                     </div>
                     <div className="col-sm-12 col-md-1"> { /* game playing cards */ }
-                        <div className={(viewWidth < 700) ? "row fixed-bottom" : "row" }>
-                            {playingCards}
+                        <div className={(viewWidth < 700) ? "row fixed-bottom" : "row row-cols-1" }>
+                            { playerCards.map((el, indx) => {
+                                return (
+                                    <PlayingCard 
+                                        key = {"playingCard-" + indx }
+                                        id = {"playingCard-" + indx }
+                                        cardName = { el }
+                                        drugFunction = { startDrag } 
+                                    />
+                                )
+                            }) }
                         </div>
                     </div>
                     <button className="btn btn-light fixed-right-leftrounded" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasTop" aria-controls="offcanvasTop">
