@@ -14,6 +14,8 @@ function TheGame(param) {
     const [ chat, updateChat ] = useState([]);
     const [ playerMssg, setPlayerMssg ] = useState("");
     const [ playerCards, setPlayerCards ] = useState([]);
+    const [ playerRole, setPlayerRole ] = useState("");
+    const [ field, setField ] = useState([]);
     const [ gameData, setGameData ] = useState({
         gameID: "",
         playerName: "", 
@@ -35,14 +37,15 @@ function TheGame(param) {
         potrzebuję jeszcze liste kart w talii 
 
         dokończyć logikę gry!!!!!!!!!!!!!!!!!!!!!!!!!
-        przeciąganie kart na pole! - działa. Trzeba jeszcze poprawić pozyciowanie kart
-        jeszcze trzeba ogarnąc zmiane kart przez click!!! 
-        pass
-        sprawdzanie, czy karta tu może leżeć - jak??????
+        - jak karty w tali skończyły się, to nie dobierać więcej kart
+        - jeszcze trzeba ogarnąc zmiane kart przez click!!! 
+        - pass
+        !!! sprawdzanie, czy karta tu może leżeć - jak??????
+
+        - wysyłanie wiadomości po wciśnięciu ENTER, ENTER + SHIFT przejście na nową linijkę
 
         zaciemnić karty pola gry
-
-        dopasować rozmiar kart do pola 
+ 
         sprawdzić różne szerokości ekranów
 
         napisac logikę, że jak szerokość ekranu jest < niż 700 to:
@@ -55,7 +58,7 @@ function TheGame(param) {
         - ile zostało kart w talii
         -przenieść czat do offcanvas
 
-        jeżeli szerokośc jest > niż 700, wyłoczyc offcanvas i pokazać wszystko na polu
+        jeżeli szerokośc jest > niż 700, wyłączyc offcanvas i pokazać wszystko na polu
     */
     for (let i = 0; i < 5; i++){
         if(i === 0 || i === 2 || i === 4) {
@@ -66,13 +69,17 @@ function TheGame(param) {
     }
     for (let i = 0; i < 45; i++) {
         if(i === 3 || i === 1) {
-            playingField.push(<div key={i} id={i} className="col field" onDragOver={allowDrag} onDrop={endDrop}></div>); // clack field 
+            playingField.push(<div key={i} id={i} className="col field" onDragOver={allowDrag} onDrop={endDrop}></div>); // black field 
+            //setField(prevValue => [...prevValue, <div key={i} id={i} className="col field" onDragOver={allowDrag} onDrop={endDrop}></div>]);
         } else if (i === 0 || i === 2 || i === 4) {
             playingField.push(<div key={i} id={i} className="col field field-card card-array1 gold-rewers" onDragOver={allowDrag} onDrop={endDrop}></div>); // gold cards
+            //setField(prevValue => [...prevValue, <div key={i} id={i} className="col field field-card card-array1 gold-rewers" onDragOver={allowDrag} onDrop={endDrop}></div>]);
         } else if (i === 42) {
             playingField.push(<div key={i} id={i} className="col field field-card card-array2 card-enter" onDragOver={allowDrag} onDrop={endDrop}></div>); // enter to the tunnel
+            //setField(prevValue => [...prevValue, <div key={i} id={i} className="col field field-card card-array2 card-enter" onDragOver={allowDrag} onDrop={endDrop}></div>]);
         } else {
             playingField.push(<div key={i} id={i} className="col field field-card card-array1 card-tunnel-rewers" onDragOver={allowDrag} onDrop={endDrop}></div>); // tunnel card
+            //setField(prevValue => [...prevValue, <div key={i} id={i} className="col field field-card card-array2 card-enter" onDragOver={allowDrag} onDrop={endDrop}></div>]);
         }
         
     }
@@ -97,12 +104,13 @@ function TheGame(param) {
         updateChat((prevMssg) => [...prevMssg, mssg]);
         setPlayerMssg("");
 
+        // send message to other players 
         param.socket.emit("game message", mssg, gameData.gameID);
     }
 
     // do Click event if Shift and Enter are pressed
     function hundlePress(e) {
-        if (e.key === 'Enter' && e.shiftKey) {
+        if (e.key === 'Enter') {
             const mssgForm = document.getElementById("submitMssgForm");
             mssgForm.click();
         }
@@ -129,8 +137,21 @@ function TheGame(param) {
     function endDrop(ev) {
         ev.preventDefault();
         let newClassName = ev.dataTransfer.getData("text");
+
         newClassName = newClassName.replace("field-playing-card", "field-card").replace(" playing-card", "");
         ev.target.className = newClassName;
+
+        // remove this card from player's waist
+        const removeFromPlayerCards = newClassName.slice(33, newClassName.length);
+        const indexToRemove = playerCards.findIndex(el => el === removeFromPlayerCards);
+        const updatedWaist = playerCards.filter((el, indx) => indx !== indexToRemove);
+        setPlayerCards(updatedWaist);
+
+        // request new cards from game waist
+        param.socket.emit("get card", pathData.version, gameData.gameID, updatedWaist);
+
+        // update playing field for all players
+        param.socket.emit("update playing field", );
     }
     
     useEffect(() => {
@@ -143,7 +164,14 @@ function TheGame(param) {
     
         param.socket.emit("getGameData", pathData.version, pathData.gameID, (serverResp) => {
             setGameData(serverResp); // render players list
-            console.log(serverResp);
+            //setPlayerCards();
+            if(serverResp.players.length == serverResp.maxPlayersNum) {
+                serverResp.players.map(el => {
+                    if(el.name === thisPlayer) {
+                        setPlayerCards(el.cards);
+                    }
+                });
+            }
         });
 
         // update gameData when new player join the game
@@ -167,7 +195,7 @@ function TheGame(param) {
         // update fields
         param.socket.on("game field update", () => {});
         // update playing cards
-        param.socket.on("game waist update", (cardArray) => {
+        param.socket.on("game waist update", cardArray => {
             setPlayerCards(prevValue => {
                 return [
                     ...prevValue, 
@@ -178,10 +206,20 @@ function TheGame(param) {
         });
 
         // listen for messages from other users and update the chat
-        param.socket.on("game message", (mssg) => {
+        param.socket.on("game message", mssg => {
             const time = new Date();
             mssg.time = time.getHours() + ":" + time.getMinutes();
             updateChat((prevMssg) => [...prevMssg, mssg]);
+        });
+
+        // listen for new cards
+        param.socket.on("get cards", cards => {
+            setPlayerCards(cards);
+        });
+
+        // listen for roles and change it
+        param.socket.on("get role", role => {
+            setPlayerRole(role);
         });
 
         
@@ -191,8 +229,10 @@ function TheGame(param) {
             param.socket.off("joiners update");
             param.socket.off("game field update");
             param.socket.off("game waist update");
+            param.socket.off("get cards");
+            param.socket.off("get role");
         }
-    }, [param.socket, gameData.players.length, pathData.gameID, pathData.version]);
+    }, [param.socket, gameData.players.length, pathData.gameID, pathData.version, thisPlayer, field]);
 
     return (
         <div>
