@@ -224,7 +224,7 @@ io.on("connection", socket => {
         socket.to(gameRoom).emit("game message", gameMessage);
     });
 
-    // finish it!
+    // distribute cards for players in the game
     socket.on("get card", (v, id, playerCardsArray) => {
         if(v === "1") {
             const el = findSaboteur1Element(id);
@@ -240,10 +240,15 @@ io.on("connection", socket => {
             });
             updateSaboteur1Element(id, el);
         } else if (v === "2") {
-
+            // finish it!
         } else {
-
+            // finish it!
         }
+    });
+
+    // update playing field to all particimants except sender
+    socket.on("game field update", (field, gameRoom) => {
+        socket.to(gameRoom).emit("game field update", field);
     });
 
     socket.on("disconnecting", () => {

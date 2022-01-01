@@ -1,9 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import Navbar from "./additionaComponents/Navbar";
 import Player from "./additionaComponents/PlayerForChatlist";
 import Message from "./additionaComponents/ChatMessage";
 import PlayingCard from "./additionaComponents/PlayingCard";
+import FieldCard from "./additionaComponents/FieldCard";
 
 
 
@@ -15,7 +16,7 @@ function TheGame(param) {
     const [ playerMssg, setPlayerMssg ] = useState("");
     const [ playerCards, setPlayerCards ] = useState([]);
     const [ playerRole, setPlayerRole ] = useState("");
-    const [ field, setField ] = useState([]);
+    const [ field, setField ] = useState(playingField);
     const [ gameData, setGameData ] = useState({
         gameID: "",
         playerName: "", 
@@ -69,19 +70,14 @@ function TheGame(param) {
     }
     for (let i = 0; i < 45; i++) {
         if(i === 3 || i === 1) {
-            playingField.push(<div key={i} id={i} className="col field" onDragOver={allowDrag} onDrop={endDrop}></div>); // black field 
-            //setField(prevValue => [...prevValue, <div key={i} id={i} className="col field" onDragOver={allowDrag} onDrop={endDrop}></div>]);
+            playingField.push({id: "fieldCard-" + i, class: "col field"}); // black field 
         } else if (i === 0 || i === 2 || i === 4) {
-            playingField.push(<div key={i} id={i} className="col field field-card card-array1 gold-rewers" onDragOver={allowDrag} onDrop={endDrop}></div>); // gold cards
-            //setField(prevValue => [...prevValue, <div key={i} id={i} className="col field field-card card-array1 gold-rewers" onDragOver={allowDrag} onDrop={endDrop}></div>]);
+            playingField.push({id: "fieldCard-" + i, class: "col field field-card card-array1 gold-rewers"}); // gold cards
         } else if (i === 42) {
-            playingField.push(<div key={i} id={i} className="col field field-card card-array2 card-enter" onDragOver={allowDrag} onDrop={endDrop}></div>); // enter to the tunnel
-            //setField(prevValue => [...prevValue, <div key={i} id={i} className="col field field-card card-array2 card-enter" onDragOver={allowDrag} onDrop={endDrop}></div>]);
+            playingField.push({id: "fieldCard-" + i, class: "col field field-card card-array2 card-enter"}); // enter to the tunnel
         } else {
-            playingField.push(<div key={i} id={i} className="col field field-card card-array1 card-tunnel-rewers" onDragOver={allowDrag} onDrop={endDrop}></div>); // tunnel card
-            //setField(prevValue => [...prevValue, <div key={i} id={i} className="col field field-card card-array2 card-enter" onDragOver={allowDrag} onDrop={endDrop}></div>]);
+            playingField.push({id: "fieldCard-" + i, class: "col field field-card card-array1 card-tunnel-rewers"}); // tunnel card
         }
-        
     }
 
     // adjust classes to the view port width
@@ -101,14 +97,14 @@ function TheGame(param) {
             align: "mssg message-right"
         }
 
-        updateChat((prevMssg) => [...prevMssg, mssg]);
+        updateChat((prevMssg) => [mssg, ...prevMssg]);
         setPlayerMssg("");
 
         // send message to other players 
         param.socket.emit("game message", mssg, gameData.gameID);
     }
 
-    // do Click event if Shift and Enter are pressed
+    // do Click event if Enter are pressed
     function hundlePress(e) {
         if (e.key === 'Enter') {
             const mssgForm = document.getElementById("submitMssgForm");
@@ -138,8 +134,17 @@ function TheGame(param) {
         ev.preventDefault();
         let newClassName = ev.dataTransfer.getData("text");
 
+        // remove unnesessary classNames
         newClassName = newClassName.replace("field-playing-card", "field-card").replace(" playing-card", "");
-        ev.target.className = newClassName;
+
+        // update specific element in array if equal to ID
+        field.map(el => {
+            if (el.id === ev.target.id) {
+                el.class = newClassName;
+            }
+        });
+
+
 
         // remove this card from player's waist
         const removeFromPlayerCards = newClassName.slice(33, newClassName.length);
@@ -151,12 +156,17 @@ function TheGame(param) {
         param.socket.emit("get card", pathData.version, gameData.gameID, updatedWaist);
 
         // update playing field for all players
-        param.socket.emit("update playing field", );
+        param.socket.emit("game field update", field, gameData.gameID);
     }
+
+    const updateField = useCallback((playingField) => {
+        setField(playingField);
+    }, [setField]);
+    
     
     useEffect(() => {
         // test - teraz mogę zmieniać karty an polu!!!
-        document.getElementById("2").className = "col ";
+        document.getElementById("fieldCard-2").className = "col ";
         // end test
         const modalBttn = document.getElementById("toggleModal");
         const modalTxt = document.getElementById("joinORleft");
@@ -193,7 +203,10 @@ function TheGame(param) {
         });
 
         // update fields
-        param.socket.on("game field update", () => {});
+        param.socket.on("game field update", field => {
+            setField(field);
+        });
+
         // update playing cards
         param.socket.on("game waist update", cardArray => {
             setPlayerCards(prevValue => {
@@ -209,7 +222,7 @@ function TheGame(param) {
         param.socket.on("game message", mssg => {
             const time = new Date();
             mssg.time = time.getHours() + ":" + time.getMinutes();
-            updateChat((prevMssg) => [...prevMssg, mssg]);
+            updateChat((prevMssg) => [mssg, ...prevMssg]);
         });
 
         // listen for new cards
@@ -221,7 +234,6 @@ function TheGame(param) {
         param.socket.on("get role", role => {
             setPlayerRole(role);
         });
-
         
         // remove listeners to avoid multiple echoes
         return () => {
@@ -232,7 +244,7 @@ function TheGame(param) {
             param.socket.off("get cards");
             param.socket.off("get role");
         }
-    }, [param.socket, gameData.players.length, pathData.gameID, pathData.version, thisPlayer, field]);
+    }, [param.socket, gameData.players.length, pathData.gameID, pathData.version, thisPlayer, field, updateField]);
 
     return (
         <div>
@@ -279,7 +291,17 @@ function TheGame(param) {
                     <div className="col-sm-12 col-md-6"> { /* game field */ }
                         <div className="flex-center-hor col">
                             <div className={(viewWidth < 700) ? "board add-space-bottom position-absolute" : "board position-absolute" }>
-                                {playingField}
+                                {field.map(el => {
+                                    return (
+                                        <FieldCard 
+                                            key={el.id}
+                                            id={el.id}
+                                            className={el.class}
+                                            allowDrag={allowDrag}
+                                            endDrop={endDrop}
+                                        />
+                                    )
+                                })}
                             </div>
                         </div>
                         <div className="flex-center-hor col">
@@ -331,7 +353,7 @@ function TheGame(param) {
                         <div className="container-flex">
                             <div className="card">
                                 <div className="card-header">Chat</div>
-                                <div className="crad-body">
+                                <div className="card-body">
                                     <div className="messanger">
                                         { chat.map((mssg, indx) => {
                                             return (

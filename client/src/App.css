@@ -29,6 +29,10 @@ form {
   position: absolute;
 }
 
+.card-body {
+  padding: 0;
+}
+
 .container-fluid {
   padding: 0;
 }
@@ -290,7 +294,7 @@ form {
 }
 
 .fix-pickaxe-and-trolley {
-  background-position-x: -251px;
+  background-position-x: 83%;
   background-position-y: 99.9%;
 }
 
@@ -553,8 +557,7 @@ form {
 /* messanger */
 .messanger {
   display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
+  flex-direction: column-reverse;
   overflow-y: scroll;
   max-height: 40vh;
   min-height: 250px;
