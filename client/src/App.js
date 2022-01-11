@@ -11,15 +11,15 @@ import io from "socket.io-client";
 const socket = io.connect("http://localhost:4000", {query: { id: "test" }});
 */
 // heroku server
-// const socket = io.connect("https://whispering-depths-44692.herokuapp.com/");
+const socket = io.connect("https://whispering-depths-44692.herokuapp.com/");
 // local sever
-const socket = io.connect("http://localhost:4000");
+// const socket = io.connect("http://localhost:4000");
 
 function App() {
 
   return (
     <Routes>
-      <Route path="/" element={<Games />} />
+      <Route path="/" element={<Games socket={ socket } />} />
       <Route path="/saboteur/:version" element={<GamesList socket={ socket } />} />
       <Route path="/saboteur/:version/new%20game" element={<NewGame socket={ socket } />} />
       <Route path="/saboteur/:version/game/:gameID/player/:player" element={<TheGame socket={ socket } />} />

@@ -16,6 +16,7 @@ function TheGame(param) {
     const [ playerMssg, setPlayerMssg ] = useState("");
     const [ playerCards, setPlayerCards ] = useState([]);
     const [ playerRole, setPlayerRole ] = useState("");
+    const [ activePlayer, setActivePlayer ] = useState();
     const [ field, setField ] = useState(playingField);
     const [ gameData, setGameData ] = useState({
         gameID: "",
@@ -166,6 +167,10 @@ function TheGame(param) {
     
     useEffect(() => {
         // test - teraz mogę zmieniać karty an polu!!!
+
+        window.onpopstate = e => {
+            param.socket.close();
+        }
         document.getElementById("fieldCard-2").className = "col ";
         // end test
         const modalBttn = document.getElementById("toggleModal");
@@ -234,6 +239,11 @@ function TheGame(param) {
         param.socket.on("get role", role => {
             setPlayerRole(role);
         });
+
+        // listen for who is active player
+        param.socket.on("active player", active => {
+            setActivePlayer(active);
+        });
         
         // remove listeners to avoid multiple echoes
         return () => {
@@ -243,12 +253,13 @@ function TheGame(param) {
             param.socket.off("game waist update");
             param.socket.off("get cards");
             param.socket.off("get role");
+            param.socket.off("active player");
         }
     }, [param.socket, gameData.players.length, pathData.gameID, pathData.version, thisPlayer, field, updateField]);
 
     return (
         <div>
-            <Navbar />
+            <Navbar socket={ param.socket } />
             {/* Modal part */}
             <div className="modal fade" id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div className="modal-dialog modal-dialog-centered">

@@ -1,6 +1,14 @@
 import { Link } from "react-router-dom";
 
-function Navbar() {
+function Navbar(param) {
+    function socketDisconnect() {
+        try {
+            param.socket.close();
+        } catch(err) {
+            console.log(err.message);
+        }
+    }
+
     return (
         <nav className="navbar navbar-expand-md navbar-dark bg-dark">
             <div className="container">
@@ -12,7 +20,7 @@ function Navbar() {
                 </button>
                 <div className="collapse navbar-collapse" id="navbarNav">
                     <ul className="navbar-nav ms-auto">
-                        <Link to="/"><li className="nav-item text-white">GAMES</li></Link>
+                        <Link onClick={ socketDisconnect } to="/"><li className="nav-item text-white">GAMES</li></Link>
                         <li className="nav-item text-white">ABOUT</li>
                         <li className="nav-item text-white">CONTACT</li>
                     </ul>
