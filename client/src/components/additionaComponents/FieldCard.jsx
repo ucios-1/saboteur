@@ -1,6 +1,6 @@
-function FieldCard (promp) {
+function FieldCard (props) {
     return (
-        <div key={promp.key} id={promp.id} className={promp.className} onDragOver={promp.allowDrag} onDrop={promp.endDrop}></div>
+        <div key={props.key} id={props.id} className={props.className} onDragOver={props.allowDrag} onDrop={props.endDrop}></div>
     )
 }
 

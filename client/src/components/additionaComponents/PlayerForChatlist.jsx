@@ -1,8 +1,8 @@
-function returnPlayer (param) {
+function returnPlayer (props) {
     return <li className="list-group-item d-flex justify-content-between align-items-start">
-                { param.name }
+                { props.name }
                 <span className="badge bg-warning text-dark rounded-pill">
-                    { param.gold }
+                    { props.gold }
                 </span>
             </li>
 }

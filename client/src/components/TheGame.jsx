@@ -5,10 +5,11 @@ import Player from "./additionaComponents/PlayerForChatlist";
 import Message from "./additionaComponents/ChatMessage";
 import PlayingCard from "./additionaComponents/PlayingCard";
 import FieldCard from "./additionaComponents/FieldCard";
+import PlayerCard from "./additionaComponents/CardPlayer";
 
 
 
-function TheGame(param) {
+function TheGame(props) {
     const playingField = [], goldDestination = [];
     const pathData = useParams();
     const [ viewWidth, updateClasses ] = useState(window.visualViewport.width);
@@ -102,7 +103,7 @@ function TheGame(param) {
         setPlayerMssg("");
 
         // send message to other players 
-        param.socket.emit("game message", mssg, gameData.gameID);
+        props.socket.emit("game message", mssg, gameData.gameID);
     }
 
     // do Click event if Enter are pressed
@@ -154,10 +155,10 @@ function TheGame(param) {
         setPlayerCards(updatedWaist);
 
         // request new cards from game waist
-        param.socket.emit("get card", pathData.version, gameData.gameID, updatedWaist);
+        props.socket.emit("get card", pathData.version, gameData.gameID, updatedWaist);
 
         // update playing field for all players
-        param.socket.emit("game field update", field, gameData.gameID);
+        props.socket.emit("game field update", field, gameData.gameID);
     }
 
     const updateField = useCallback((playingField) => {
@@ -169,7 +170,7 @@ function TheGame(param) {
         // test - teraz mogę zmieniać karty an polu!!!
 
         window.onpopstate = e => {
-            param.socket.close();
+            props.socket.close();
         }
         document.getElementById("fieldCard-2").className = "col ";
         // end test
@@ -177,7 +178,7 @@ function TheGame(param) {
         const modalTxt = document.getElementById("joinORleft");
         const modalTxt2 = document.getElementById("letTheGameBegin");
     
-        param.socket.emit("getGameData", pathData.version, pathData.gameID, (serverResp) => {
+        props.socket.emit("getGameData", pathData.version, pathData.gameID, (serverResp) => {
             setGameData(serverResp); // render players list
             //setPlayerCards();
             if(serverResp.players.length == serverResp.maxPlayersNum) {
@@ -190,7 +191,7 @@ function TheGame(param) {
         });
 
         // update gameData when new player join the game
-        param.socket.on("joiners update", (newGameData, playerName) => {
+        props.socket.on("joiners update", (newGameData, playerName) => {
             if(newGameData.maxPlayersNum == newGameData.players.length) {
                 modalTxt.innerHTML = "Player " + playerName + " joined the game";
                 modalTxt2.innerHTML = "Let the game BEGIN!";
@@ -208,12 +209,12 @@ function TheGame(param) {
         });
 
         // update fields
-        param.socket.on("game field update", field => {
+        props.socket.on("game field update", field => {
             setField(field);
         });
 
         // update playing cards
-        param.socket.on("game waist update", cardArray => {
+        props.socket.on("game waist update", cardArray => {
             setPlayerCards(prevValue => {
                 return [
                     ...prevValue, 
@@ -224,42 +225,42 @@ function TheGame(param) {
         });
 
         // listen for messages from other users and update the chat
-        param.socket.on("game message", mssg => {
+        props.socket.on("game message", mssg => {
             const time = new Date();
             mssg.time = time.getHours() + ":" + time.getMinutes();
             updateChat((prevMssg) => [mssg, ...prevMssg]);
         });
 
         // listen for new cards
-        param.socket.on("get cards", cards => {
+        props.socket.on("get cards", cards => {
             setPlayerCards(cards);
         });
 
         // listen for roles and change it
-        param.socket.on("get role", role => {
+        props.socket.on("get role", role => {
             setPlayerRole(role);
         });
 
         // listen for who is active player
-        param.socket.on("active player", active => {
+        props.socket.on("active player", active => {
             setActivePlayer(active);
         });
         
         // remove listeners to avoid multiple echoes
         return () => {
-            param.socket.off("game message");
-            param.socket.off("joiners update");
-            param.socket.off("game field update");
-            param.socket.off("game waist update");
-            param.socket.off("get cards");
-            param.socket.off("get role");
-            param.socket.off("active player");
+            props.socket.off("game message");
+            props.socket.off("joiners update");
+            props.socket.off("game field update");
+            props.socket.off("game waist update");
+            props.socket.off("get cards");
+            props.socket.off("get role");
+            props.socket.off("active player");
         }
-    }, [param.socket, gameData.players.length, pathData.gameID, pathData.version, thisPlayer, field, updateField]);
+    }, [props.socket, gameData.players.length, pathData.gameID, pathData.version, thisPlayer, field, updateField]);
 
     return (
         <div>
-            <Navbar socket={ param.socket } />
+            <Navbar socket={ props.socket } />
             {/* Modal part */}
             <div className="modal fade" id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div className="modal-dialog modal-dialog-centered">
@@ -277,29 +278,27 @@ function TheGame(param) {
             </div>
 
             {/* Games List part */}
-            <div className="container">
+            <div className="container margin-top">
                 <div className="row row-cols-1 row-cols-sm-3 flex-center-hor">
-                    <div className="col-sm-12 col-md-1">
+                    <div className="col-sm-12 col-md-3">
                         { /* row with game status icons */ }
                         <div className={(viewWidth < 700) ? "" : "row" }>  
-                            <i className="icon icon-active fas fa-dolly-flatbed"></i>
-                            <i className="icon icon-deactive fas fa-hammer"></i>
-                            <i className="icon icon-active far fa-lightbulb"></i>
-                        </div>
-                    </div>
-                    <div className="col-sm-12 col-md-1">
-                        <div className={(viewWidth < 700) ? "flex-center flex-wrap" : "row row-cols-sm-3" }>
-                            <div className="player player-active">
-                                <i className="icon fas fa-user"></i>
-                                <p>user name</p>
-                            </div>
-                            <div className="player player-deactive">
-                                <i className="icon fas fa-user"></i>
-                                <p>user name</p>
+                            <PlayerCard player={thisPlayer} />
+                            <div className="card card-player active">
+                                <div className="card-body">
+                                    <h6>Player</h6>
+                                    <p>Gold</p>
+                                </div>
+                                <div className="card-body flex-center-hor flex-space-around">
+                                    <div className="card-array2 player-status fixed status-latern"></div>
+                                    <div className="card-array2 player-status fixed status-pickaxe"></div>
+                                    <div className="card-array2 player-status fixed status-trolley"></div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div className="col-sm-12 col-md-6"> { /* game field */ }
+                    { /* game field */ }
+                    <div className="col-sm-12 col-md-6"> 
                         <div className="flex-center-hor col">
                             <div className={(viewWidth < 700) ? "board add-space-bottom position-absolute" : "board position-absolute" }>
                                 {field.map(el => {

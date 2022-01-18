@@ -3,10 +3,10 @@ import saboteur2 from "../images/saboteur2_cover.png";
 import { Link } from "react-router-dom";
 import Navbar from "./additionaComponents/Navbar";
 
-function Games(param){
+function Games(props){
     // change it to avoid multiplying code on different pages :(((((
     function updateGameList () {
-        param.socket.emit("getGamesList", 1);
+        props.socket.emit("getGamesList", 1);
     }
 
     return(

@@ -6,7 +6,7 @@ import FormTextInput from "./additionaComponents/FormTextInput";
 import supervillains from "supervillains"; // create random user name
 
 
-function GamesList(param){
+function GamesList(props){
     const user = supervillains.random(); // set name for user
     const saboteurVersion = useParams(); // check the game version to request correct list of games from server
     const [gamesList, setGamesList] = useState();
@@ -37,18 +37,18 @@ function GamesList(param){
     const gameEnter = useCallback(() => {
         userCredentials.name = checkUserName(userCredentials.name);
 
-        param.socket.emit("gameConnect", saboteurVersion.version, userCredentials.id, userCredentials.name, userCredentials.password, serverResp => {
+        props.socket.emit("gameConnect", saboteurVersion.version, userCredentials.id, userCredentials.name, userCredentials.password, serverResp => {
             if (serverResp.status === "welcome") {
                 navigate("/saboteur/" + saboteurVersion.version + "/game/" + userCredentials.id + "/player/" + userCredentials.name );
             }
         });
-    },[userCredentials, param.socket, navigate, saboteurVersion.version, checkUserName]);
+    },[userCredentials, props.socket, navigate, saboteurVersion.version, checkUserName]);
     
     useEffect(() => {
-        param.socket.emit("getGamesList",saboteurVersion.version); // send request to the server for list of games
+        props.socket.emit("getGamesList",saboteurVersion.version); // send request to the server for list of games
 
         // listen to respond from the server and update gamesList from useState render automaticaly list of games
-        param.socket.on(socketListener, (arg) => {
+        props.socket.on(socketListener, (arg) => {
             setGamesList(
                 arg.map((element, indx) => {
                     return <TableRow 
@@ -66,9 +66,9 @@ function GamesList(param){
             );
         }); 
         // remove listener to avoid multiple echoes
-        return () => param.socket.off(socketListener);
+        return () => props.socket.off(socketListener);
         // update page only if one of the paramenters below has been changed
-    }, [param.socket, saboteurVersion, socketListener, navigate, gameEnter]);
+    }, [props.socket, saboteurVersion, socketListener, navigate, gameEnter]);
     
     
     return (

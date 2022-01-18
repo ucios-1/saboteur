@@ -1,16 +1,16 @@
-function chatMessage (param) {
+function chatMessage (props) {
     return (
-        <div className={ param.align }>
+        <div className={ props.align }>
             <div className="mssg-header">
                 <div className="player-name">
-                    { param.name }
+                    { props.name }
                 </div>
                 <div className="message-time">
-                    { param.time }
+                    { props.time }
                 </div>
             </div>
             <div className="message-body">
-                { param.mssg }
+                { props.mssg }
             </div>
         </div>
     )

@@ -1,5 +1,5 @@
 
-function TableRow(param) {
+function TableRow(props) {
     // disable button if players queue is full 
     function isActive (num1, num2, link) {
         return (
@@ -12,22 +12,22 @@ function TableRow(param) {
 
     // call function from gameList level
     function handleClick() {
-        param.enterGame(prevValue => {
+        props.enterGame(prevValue => {
             return {
                 ...prevValue, 
-                id: param.id,
-                access: param.access
+                id: props.id,
+                access: props.access
             }
         });
     }
 
     return (
         <tr>
-            <th scope="row">{param.num}</th>
-            <td>{param.name}</td>
-            <td>{param.players + "/" + param.maxPlayers}</td>
-            <td>{param.access}</td>
-            <td>{isActive(param.maxPlayers, param.players, param.link)}</td>
+            <th scope="row">{props.num}</th>
+            <td>{props.name}</td>
+            <td>{props.players + "/" + props.maxPlayers}</td>
+            <td>{props.access}</td>
+            <td>{isActive(props.maxPlayers, props.players, props.link)}</td>
         </tr>
     )
 }

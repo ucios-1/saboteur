@@ -1,21 +1,21 @@
-function FormNumInput (promp) {
+function FormNumInput (props) {
     return (
         <div className="form-input-separator col-sm-12">
             <label 
-                htmlFor={ promp.forInput }
+                htmlFor={ props.forInput }
                 className="form-label"
             >
-                { promp.labelText }
+                { props.labelText }
             </label>
             <input 
                 className="form-control" 
                 type="number" 
-                name={ promp.inputName } 
-                onChange={promp.passFunction} 
-                value={ promp.passValue } 
-                min={ promp.minValue } 
-                max={ promp.maxValue } 
-                placeholder={ promp.placeholder }
+                name={ props.inputName } 
+                onChange={props.passFunction} 
+                value={ props.passValue } 
+                min={ props.minValue } 
+                max={ props.maxValue } 
+                placeholder={ props.placeholder }
             />
         </div>
     )

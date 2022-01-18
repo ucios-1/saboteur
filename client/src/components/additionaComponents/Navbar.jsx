@@ -1,9 +1,9 @@
 import { Link } from "react-router-dom";
 
-function Navbar(param) {
+function Navbar(props) {
     function socketDisconnect() {
         try {
-            param.socket.close();
+            props.socket.close();
         } catch(err) {
             console.log(err.message);
         }

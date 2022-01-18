@@ -10,7 +10,7 @@ import _ from "lodash";
 
 // napisać logikę, która będzie przyjmować dane z serwera o nowej grze 
 
-function NewGame(param) {
+function NewGame(props) {
     const user = supervillains.random(); // sent name for user
     const v = useParams(); //check game version
     const navigate = useNavigate();
@@ -37,7 +37,7 @@ function NewGame(param) {
     function createGame(e) {
         e.preventDefault();
 
-        param.socket.emit("addGame", v.version, gameCard, (serverResp) => {
+        props.socket.emit("addGame", v.version, gameCard, (serverResp) => {
             if (serverResp.status === "created") {
                 // go to Game page
                 navigate("/saboteur/" + v.version + "/game/" + gameCard.gameID + "/player/" + gameCard.playerName);

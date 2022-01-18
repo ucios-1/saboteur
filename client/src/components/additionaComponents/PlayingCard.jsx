@@ -1,4 +1,4 @@
-function PlayingCard (promp) {
+function PlayingCard (props) {
     var card = "col field field-playing-card playing-card ";
 
     function activateMe(e) {
@@ -16,7 +16,7 @@ function PlayingCard (promp) {
         }
     }
 
-    switch(promp.cardName) {
+    switch(props.cardName) {
         case "tunnel-crossroads-x":
             card += "card-array1 ";
             break;
@@ -69,10 +69,10 @@ function PlayingCard (promp) {
             card += "card-array2 ";
     }
 
-    card += promp.cardName;
+    card += props.cardName;
 
     return (
-        <div id={promp.id} className={card} onClick={activateMe} onDragStart={promp.drugFunction} draggable="true"></div>
+        <div id={props.id} className={card} onClick={activateMe} onDragStart={props.drugFunction} draggable="true"></div>
     )
 }
 

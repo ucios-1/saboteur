@@ -25,8 +25,21 @@ form {
   height: auto;
 }
 
-.position-absolute{
-  position: absolute;
+hr {
+  margin: 5px 0;
+  padding: 0;
+}
+
+.active {
+  border: 4px solid #f7b320;
+}
+
+.active:hover {
+  border-color: #bb8717;
+}
+
+.btn.font1-5rem {
+  margin: 20px 0 0;
 }
 
 .card-body {
@@ -50,10 +63,6 @@ form {
   color: #424242;
 }
 
-.btn.font1-5rem {
-  margin: 20px 0 0;
-}
-
 .flex-center-hor {
   display: flex;
   justify-content: center;
@@ -71,6 +80,14 @@ form {
   justify-content: center;
 }
 
+.flex-space-around {
+  justify-content: space-around;
+}
+
+.flex-space-beetwen {
+  justify-content: space-between;
+}
+
 .flex-wrap {
   flex-wrap: wrap;
 }
@@ -86,6 +103,18 @@ form {
 
 .full-height {
   height: 100%;
+}
+
+.hidden {
+  visibility: hidden;
+}
+
+.margin-top {
+  margin-top: 15px;
+}
+
+.position-absolute{
+  position: absolute;
 }
 
 ::-webkit-scrollbar {
@@ -185,12 +214,83 @@ form {
 .board {
   display: inline-grid;
   grid-template-columns: auto auto auto auto auto;
-  margin: 2vh;
+  margin: 0 2vh;
   height: auto;
   width: auto;
 }
 
+/* Players */
+.card-player {
+  margin: 2px;
+  padding: 8px;
+  width: 200px;
+}
+
+.card-body>p {
+  margin: 0;
+}
+
+.money-icon, .player-role, .player-status {
+  border-radius: 50%;
+}
+
+.money-icon {
+  height: 35px;
+  width: 35px;
+}
+
+.money-icon>img {
+  height: 30px;
+  width: 30px;
+}
+
+.money-score {
+  margin: 0 1px 0 6px;
+  font-size: 1.1rem;
+}
+
+.player-status {
+  background-size: 1300px;
+  height: 35px;
+  width: 35px;
+}
+
+.broken {
+  border: 3px solid #ff0000;
+}
+
+.broken-cross {
+  background-color: #ff0000;
+  height: 32px;
+  width: 3px;
+  transform: rotate(-45deg);
+}
+
+.broken-cross:before {
+  transform: rotate(-45deg);
+}
+
+.fixed {
+  border: 3px solid #008000;
+}
+
+.status-latern {
+  background-position: 45.4% 71.3%;
+}
+
+.status-pickaxe {
+  background-position: 25.6% 71.4%;
+}
+
+.status-trolley {
+  background-position: 30.7% 71.3%;
+}
+
 /* Card arrays */
+
+.card-array1, .card-array2 {
+  background-repeat: no-repeat;
+}
 
 .card-array1 {
   background-image: url(./images/pic1v5.jpg);
@@ -400,12 +500,10 @@ form {
 /* else */
 
 .field-card {
-  background-repeat: no-repeat;
   background-size: 352px; 
 }
 
 .field-playing-card {
-  background-repeat: no-repeat;
   background-size: 450px;
 }
 
