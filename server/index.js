@@ -104,7 +104,7 @@ function findSaboteur1Element(id) {
 }
 
 function setPlayerAsActive(num) {
-    return Math.round(Math.random() * num);
+    return Math.floor(Math.random() * num);
 }
 
 function updateSaboteur1Element(id, update) {
@@ -113,6 +113,15 @@ function updateSaboteur1Element(id, update) {
             el = update;
         }
     });
+}
+
+function updateActivePlayer(activeNum, maxPlayersNum) {
+    activeNum += 1;
+    if(activeNum < maxPlayersNum) {
+        return activeNum;
+    } else {
+        return 0;
+    }
 }
 
 io.on("connection", socket => {
@@ -190,6 +199,9 @@ io.on("connection", socket => {
                         cardsNum = 4;
                     }
 
+                    // set some player as active randomply
+                    el.active = setPlayerAsActive(el.players.length);
+
                     // create game roles
                     el.roles = assignRolesToTheGame(el.maxPlayersNum);
                     
@@ -207,11 +219,9 @@ io.on("connection", socket => {
 
                         socket.emit("game waist update", player.cards);
                         socket.emit("get role", player.role);
+                        socket.emit("active player", el.active);
                     });
-
-                    // set some player as active randomply
-                    el.active = setPlayerAsActive(el.players.length);
-                    io.to(el.gameID).emit("active player", el.active);
+                    // io.to(el.gameID).emit("active player", el.active);
                 }
 
                 updateSaboteur1Element(id, el);
@@ -266,6 +276,16 @@ io.on("connection", socket => {
     // update playing field to all particimants except sender
     socket.on("game field update", (field, gameRoom) => {
         socket.to(gameRoom).emit("game field update", field);
+    });
+
+    // change active player
+    socket.on("update active", id => {
+        const el = findSaboteur1Element(id);
+
+        el.active = updateActivePlayer(el.active, el.maxPlayersNum);
+        io.to(id).emit("active player", el.active);
+
+        updateSaboteur1Element(id, el);
     });
 
     socket.on("disconnecting", (reason) => {

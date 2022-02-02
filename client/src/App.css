@@ -226,6 +226,14 @@ hr {
   width: 200px;
 }
 
+.card-player-name>h5, .card-player-name>p {
+  margin: 0;
+}
+
+.card-player-name>p {
+  font-size: 0.7rem;
+}
+
 .card-body>p {
   margin: 0;
 }

@@ -10,13 +10,17 @@ import PlayerCard from "./additionaComponents/CardPlayer";
 
 
 function TheGame(props) {
+    const modalBttn = document.getElementById("toggleModal");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalTxt = document.getElementById("joinORleft");
+    const modalTxt2 = document.getElementById("letTheGameBegin");
     const playingField = [], goldDestination = [];
     const pathData = useParams();
     const [ viewWidth, updateClasses ] = useState(window.visualViewport.width);
     const [ chat, updateChat ] = useState([]);
     const [ playerMssg, setPlayerMssg ] = useState("");
     const [ playerCards, setPlayerCards ] = useState([]);
-    const [ playerRole, setPlayerRole ] = useState("");
+    const [ playerRole, setPlayerRole ] = useState(""); // check if I need it
     const [ activePlayer, setActivePlayer ] = useState();
     const [ field, setField ] = useState(playingField);
     const [ gameData, setGameData ] = useState({
@@ -36,8 +40,7 @@ function TheGame(props) {
         kazdy element musi miec swoje id
         do kazdego elementu trzeba przepisac karte
         karte mozna zmieniac w odniesieniu do elementu
-
-        potrzebuję jeszcze liste kart w talii 
+ 
 
         dokończyć logikę gry!!!!!!!!!!!!!!!!!!!!!!!!!
         - jak karty w tali skończyły się, to nie dobierać więcej kart
@@ -46,8 +49,6 @@ function TheGame(props) {
         !!! sprawdzanie, czy karta tu może leżeć - jak??????
 
         - wysyłanie wiadomości po wciśnięciu ENTER, ENTER + SHIFT przejście na nową linijkę
-
-        zaciemnić karty pola gry
  
         sprawdzić różne szerokości ekranów
 
@@ -133,54 +134,77 @@ function TheGame(props) {
     }
 
     function endDrop(ev) {
-        ev.preventDefault();
-        let newClassName = ev.dataTransfer.getData("text");
+        if(thisPlayer === activePlayer) {
+            ev.preventDefault();
+            let newClassName = ev.dataTransfer.getData("text");
 
-        // remove unnesessary classNames
-        newClassName = newClassName.replace("field-playing-card", "field-card").replace(" playing-card", "");
+            // remove unnesessary classNames
+            newClassName = newClassName.replace("field-playing-card", "field-card").replace(" playing-card", "");
 
-        // update specific element in array if equal to ID
-        field.map(el => {
-            if (el.id === ev.target.id) {
-                el.class = newClassName;
-            }
-        });
+            // update specific element in array if equal to ID
+            field.map(el => {
+                if (el.id === ev.target.id) {
+                    el.class = newClassName;
+                }
+            });
 
 
 
-        // remove this card from player's waist
-        const removeFromPlayerCards = newClassName.slice(33, newClassName.length);
-        const indexToRemove = playerCards.findIndex(el => el === removeFromPlayerCards);
-        const updatedWaist = playerCards.filter((el, indx) => indx !== indexToRemove);
-        setPlayerCards(updatedWaist);
+            // remove this card from player's waist
+            const removeFromPlayerCards = newClassName.slice(33, newClassName.length);
+            const indexToRemove = playerCards.findIndex(el => el === removeFromPlayerCards);
+            const updatedWaist = playerCards.filter((el, indx) => indx !== indexToRemove);
+            setPlayerCards(updatedWaist);
 
-        // request new cards from game waist
-        props.socket.emit("get card", pathData.version, gameData.gameID, updatedWaist);
+            // request new cards from game waist
+            props.socket.emit("get card", pathData.version, gameData.gameID, updatedWaist);
 
-        // update playing field for all players
-        props.socket.emit("game field update", field, gameData.gameID);
+            // update playing field for all players
+            props.socket.emit("game field update", field, gameData.gameID);
+
+            // update active player for all player
+            props.socket.emit("update active", gameData.gameID);
+
+        } else {
+            showModal(
+                "Game alert",
+                "Only active player can make a move",
+                activePlayer + " turn now"
+            );
+        }
     }
 
     const updateField = useCallback((playingField) => {
         setField(playingField);
     }, [setField]);
-    
+
+    // show Bootstrap Modal with customized text
+    const showModal = useCallback((text1, text2, text3) => {
+        modalTitle.innerHTML = text1;
+        modalTxt.innerHTML = text2;
+        modalTxt2.innerHTML = text3;
+        modalBttn.click();
+    }, [modalBttn, modalTitle, modalTxt, modalTxt2]);    
     
     useEffect(() => {
-        // test - teraz mogę zmieniać karty an polu!!!
-
+        // close socket connection if "go back" arrow was pressed in browser
         window.onpopstate = e => {
             props.socket.close();
         }
+
+        console.log("test");
+
+        // test - teraz mogę zmieniać karty an polu!!!
         document.getElementById("fieldCard-2").className = "col ";
         // end test
-        const modalBttn = document.getElementById("toggleModal");
-        const modalTxt = document.getElementById("joinORleft");
-        const modalTxt2 = document.getElementById("letTheGameBegin");
+
+        // const modalBttn = document.getElementById("toggleModal");
+        // const modalTxt = document.getElementById("joinORleft");
+        // const modalTxt2 = document.getElementById("letTheGameBegin");
     
         props.socket.emit("getGameData", pathData.version, pathData.gameID, (serverResp) => {
             setGameData(serverResp); // render players list
-            //setPlayerCards();
+
             if(serverResp.players.length == serverResp.maxPlayersNum) {
                 serverResp.players.map(el => {
                     if(el.name === thisPlayer) {
@@ -188,21 +212,32 @@ function TheGame(props) {
                     }
                 });
             }
+
+            if(serverResp.active) {
+                setActivePlayer(serverResp.players[serverResp.active].name);
+            }
         });
 
         // update gameData when new player join the game
         props.socket.on("joiners update", (newGameData, playerName) => {
             if(newGameData.maxPlayersNum == newGameData.players.length) {
-                modalTxt.innerHTML = "Player " + playerName + " joined the game";
-                modalTxt2.innerHTML = "Let the game BEGIN!";
-                modalBttn.click();
+                showModal(
+                    "New Player!",
+                    "Player " + playerName + " joined the game",
+                    "Let the game BEGIN!"
+                );
             } else if (gameData.players.length < newGameData.players.length) {
-                modalTxt.innerHTML = "Player " + playerName + " joined the game";
-                modalBttn.click();
+                showModal(
+                    "New Player!",
+                    "Player " + playerName + " joined the game",
+                    ""
+                );
             } else {
-                modalTxt.innerHTML = "Player " + playerName + " left the game";
-                modalTxt2.innerHTML = "";
-                modalBttn.click();
+                showModal(
+                    "Player loss!",
+                    "Player " + playerName + " left the game",
+                    ""
+                );
             }
 
             setGameData(newGameData);
@@ -221,7 +256,6 @@ function TheGame(props) {
                     ...cardArray
                 ]
             });
-            
         });
 
         // listen for messages from other users and update the chat
@@ -243,7 +277,10 @@ function TheGame(props) {
 
         // listen for who is active player
         props.socket.on("active player", active => {
-            setActivePlayer(active);
+            console.log("Active: " + active + ", max: " + gameData.maxPlayersNum); // searching for bugs 
+            if(gameData.players.length == gameData.maxPlayersNum) {
+                setActivePlayer(gameData.players[active].name);
+            }
         });
         
         // remove listeners to avoid multiple echoes
@@ -256,7 +293,7 @@ function TheGame(props) {
             props.socket.off("get role");
             props.socket.off("active player");
         }
-    }, [props.socket, gameData.players.length, pathData.gameID, pathData.version, thisPlayer, field, updateField]);
+    }, [props.socket, pathData, thisPlayer, field, updateField, showModal, gameData.maxPlayersNum, gameData.players.length]);
 
     return (
         <div>
@@ -266,7 +303,7 @@ function TheGame(props) {
                 <div className="modal-dialog modal-dialog-centered">
                     <div className="modal-content">
                         <div className="modal-header">
-                            <h5 className="modal-title" id="exampleModalLabel">Player update</h5>
+                            <h5 className="modal-title" id="modalTitle"> </h5>
                             <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div className="modal-body">
@@ -282,19 +319,32 @@ function TheGame(props) {
                 <div className="row row-cols-1 row-cols-sm-3 flex-center-hor">
                     <div className="col-sm-12 col-md-3">
                         { /* row with game status icons */ }
-                        <div className={(viewWidth < 700) ? "" : "row" }>  
-                            <PlayerCard player={thisPlayer} />
-                            <div className="card card-player active">
-                                <div className="card-body">
-                                    <h6>Player</h6>
-                                    <p>Gold</p>
-                                </div>
-                                <div className="card-body flex-center-hor flex-space-around">
-                                    <div className="card-array2 player-status fixed status-latern"></div>
-                                    <div className="card-array2 player-status fixed status-pickaxe"></div>
-                                    <div className="card-array2 player-status fixed status-trolley"></div>
-                                </div>
-                            </div>
+                        <div className={(viewWidth < 700) ? "" : "row" }> 
+                            { gameData.players.map((el, indx) => {
+                                return (
+                                    el.name === thisPlayer && 
+                                        <PlayerCard 
+                                            key={"PlayerCard" + indx}
+                                            id={"PlayerCard" + indx}
+                                            active={ el.name === activePlayer && "active" }
+                                            money={ el.money ? el.money : 0 }
+                                            player={ el.name }
+                                            role={ el.role }
+                                        />
+                                );
+                            }) }
+                            { gameData.players.map((el, indx) => {
+                                return (
+                                    el.name !== thisPlayer && 
+                                        <PlayerCard 
+                                            key={"PlayerCard" + indx}
+                                            id={"PlayerCard" + indx}
+                                            active={ el.name === activePlayer && "active" }
+                                            money={ el.money ? el.money : 0 }
+                                            player={ el.name }
+                                        />
+                                );
+                            }) }
                         </div>
                     </div>
                     { /* game field */ }
@@ -406,6 +456,7 @@ function TheGame(props) {
                 </div>
             </div>
             <button style={{display: "none"}} id="toggleModal" data-bs-toggle="modal" data-bs-target="#exampleModal"></button>
+            <a href="https://icons8.com/icon/azNmDATTkIJa/gold">Gold icon by Icons8</a>
         </div>
     );
 }

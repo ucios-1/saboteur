@@ -2,9 +2,18 @@ import MinerStatus from "./subComponent/minerStatus.jsx";
 
 function PlayerCard (props) {
     return (
-        <div className="card card-player">
+        <div id={props.id} className={`card card-player ${props.active}`}>
             <div className="card-body flex-center-hor flex-space-beetwen">
-                <h5>{ props.player }</h5>
+                <div className="card-player-name">
+                    <h5>{ props.player }</h5>
+                    <p>{ props.role }</p>
+                </div>
+                <div className="player-money flex-center">
+                    <div className="money-icon flex-center">
+                        <img src="https://img.icons8.com/external-kiranshastry-lineal-color-kiranshastry/64/000000/external-gold-man-accessories-kiranshastry-lineal-color-kiranshastry.png" alt="icon of gold bar"/>
+                    </div>
+                    <p className="money-score">{props.money}</p>
+                </div>
             </div>
             <hr></hr>
             <div className="card-body flex-center-hor flex-space-around">
@@ -26,12 +35,6 @@ function PlayerCard (props) {
                     status={"broken"}
                     tool={"status-trolley"}
                 />
-                <div className="player-money flex-center">
-                    <div className="money-icon flex-center">
-                        <img src="https://img.icons8.com/external-kiranshastry-lineal-color-kiranshastry/64/000000/external-gold-man-accessories-kiranshastry-lineal-color-kiranshastry.png" alt="icon of gold bar"/>
-                    </div>
-                    <p className="money-score">12</p>
-                </div>
             </div>
         </div>
     );
